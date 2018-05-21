@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     let themeList: string[] | undefined = extensionConfig.get("themeList");
     if (themeList === undefined || themeList.length === 0) {
-      themeList = ["Visual Studio Light", "Visual Studio Dark"];
+      themeList = ["Default Dark+", "Default Light+"];
     }
     console.log("themeList", themeList);
 

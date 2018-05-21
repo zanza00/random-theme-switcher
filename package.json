@@ -18,9 +18,22 @@
         "commands": [
             {
                 "command": "randomThemeSwitcher.switchTheme",
-                "title": "Switch to a Random Theme"
+                "title": "Random Theme: Switch to a Random Theme"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "Random Theme Switcher configuration list",
+            "properties": {
+                "randomThemeSwitcher.themeList": {
+                    "default": [
+                        "Default Dark+",
+                        "Default Light+"
+                    ],
+                    "description": "List of themes from which one random theme is selected",
+                    "type":"array" 
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
