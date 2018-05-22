@@ -1,63 +1,68 @@
 {
-  "name": "random-theme-switcher",
-  "displayName": "Random Theme Switcher",
-  "description": "A simple extension that randomly choose a theme",
-  "version": "0.0.1",
-  "publisher": "zanza00",
-  "author": {
-    "name": "Simone Picciani",
-    "email": "zanza00@gmail.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zanza00/random-theme-switcher"
-  },
-  "engines": {
-    "vscode": "^1.23.0"
-  },
-  "categories": ["Other"],
-  "activationEvents": [
-    "onCommand:randomThemeSwitcher.switchTheme",
-    "*"
-  ],
-  "main": "./out/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "randomThemeSwitcher.switchTheme",
-        "title": "Random Theme: Switch to a Random Theme"
-      }
+    "name": "random-theme-switcher",
+    "displayName": "Random Theme Switcher",
+    "description": "A simple extension that randomly choose a theme",
+    "version": "0.0.2",
+    "publisher": "zanza00",
+    "author": {
+        "name": "Simone Picciani",
+        "email": "zanza00@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zanza00/random-theme-switcher"
+    },
+    "engines": {
+        "vscode": "^1.23.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "configuration": {
-      "title": "Random Theme Switcher configuration list",
-      "properties": {
-        "randomThemeSwitcher.themeList": {
-          "default": ["Default Dark+", "Default Light+"],
-          "description": "List of themes from which one random theme is selected",
-          "type": "array"
-        },
-        "randomThemeSwitcher.switchOnOpen" :{
-          "type": "boolean",
-          "description": "When active it will change theme when code is opened",
-          "default": "true"
+    "activationEvents": [
+        "onCommand:randomThemeSwitcher.switchTheme",
+        "*"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "randomThemeSwitcher.switchTheme",
+                "title": "Random Theme: Switch to a Random Theme"
+            }
+        ],
+        "configuration": {
+            "title": "Random Theme Switcher configuration list",
+            "properties": {
+                "randomThemeSwitcher.themeList": {
+                    "default": [
+                        "Default Dark+",
+                        "Default Light+"
+                    ],
+                    "description": "List of themes from which one random theme is selected",
+                    "type": "array"
+                },
+                "randomThemeSwitcher.switchOnOpen": {
+                    "type": "boolean",
+                    "description": "When active it will change theme when code is opened",
+                    "default": "true"
+                }
+            }
         }
-      }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "lodash": "^4.17.10"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.6",
-    "@types/node": "^7.0.43",
-    "@types/mocha": "^2.2.42"
-  },
-  "dependencies": {
-    "lodash": "^4.17.10"
-  }
 }
