@@ -36,11 +36,19 @@ for now this process is manual
 ## TODO
 
 - [x] Change theme at startup.
-- [ ] Add the current theme to the theme list
-- [ ] If no list is provided use the installed themes
-- [ ] Add key chord for changing theme
+- [x] If no list is provided use the installed themes.
+- [ ] Add the current theme to the theme list.
+- [ ] Add key chord for changing theme.
 
 ## Release Notes
+
+## 0.1.0
+
+- Added command for save current installed themes in settings list.
+- If no theme list is provided all the installed themes will be used. 
+- Now the current theme cannot be applied when choosing randomly.
+- If only one theme is present in the list that theme will be applied (why ???).
+
 
 ## 0.0.2
 
@@ -48,4 +56,4 @@ for now this process is manual
 
 ### 0.0.1
 
-Initial release, can only change the theme via custom palette command
+- Initial release, can only change the theme via custom palette command.
