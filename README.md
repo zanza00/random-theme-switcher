@@ -11,15 +11,13 @@ A simple extension that chooses and applies a *random* theme.
 
 ![Change the current Theme](media/rtm.gif)
 
-### Change theme when code starts
+### Change theme when vscode starts
 
 - Open a new window and, after a few seconds, behold the new theme!
 
 ## Extension Settings
 
-This extension choos a random theme from a list in the user settngs.
-
-* `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when code is opened.
+* `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when vscode is opened.
 
 * `randomThemeSwitcher.themeList`: a list of string with labels of themes.
 
@@ -39,13 +37,11 @@ example:
 ],
 ```
 
-
-
 ## TODO
 
 - [x] Change theme at startup.
 - [x] If no list is provided use the installed themes.
-- [ ] Add the current theme to the theme list.
+- [ ] Add or remove the current theme to the theme list.
 - [ ] Add key chord for changing theme.
 
 ## Release Notes
