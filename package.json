@@ -38,7 +38,7 @@
         },
         "randomThemeSwitcher.switchOnStart" :{
           "type": "boolean",
-          "description": "When active it will change theme on opening of VSCode",
+          "description": "When active it will change theme when code is opened",
           "default": "true"
         }
       }

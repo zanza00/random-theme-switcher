@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { random } from "lodash";
+import random = require("lodash/random");
 
 function getSettings(): {
   userSettings: vscode.WorkspaceConfiguration;
@@ -13,19 +13,23 @@ function getSettings(): {
 }
 
 function changeTheme(userSettings: vscode.WorkspaceConfiguration, extensionConfig: vscode.WorkspaceConfiguration) {
-  const themeList = getThemeList(extensionConfig);
+  const themeList = getThemeList(extensionConfig, userSettings);
   const i = random(themeList.length - 1);
   const newTheme = themeList[i];
   userSettings.update("workbench.colorTheme", newTheme, true);
   vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
 
-function getThemeList(extensionConfig: vscode.WorkspaceConfiguration): string[] {
-  let themeList: string[] | undefined = extensionConfig.get("themeList");
+function getThemeList(
+  extensionConfig: vscode.WorkspaceConfiguration,
+  userSettings: vscode.WorkspaceConfiguration
+): string[] {
+  const themeList: string[] | undefined = extensionConfig.get("themeList");
   if (themeList === undefined || themeList.length === 0) {
-    themeList = ["Default Dark+", "Default Light+"];
+    return ["Default Dark+", "Default Light+"];
   }
-  return themeList;
+  const currentTheme = userSettings.get("workbench.colorTheme", "");
+  return themeList.filter(theme => theme !== currentTheme);
 }
 
 export function activate(context: vscode.ExtensionContext) {

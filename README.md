@@ -33,7 +33,7 @@ for now this process is manual
 
 ## TODO
 
-- [ ] Change theme at startup.
+- [x] Change theme at startup.
 - [ ] Add the current theme to the theme list
 - [ ] If no list is provided use the installed themes
 - [ ] Add key chord for changing theme
