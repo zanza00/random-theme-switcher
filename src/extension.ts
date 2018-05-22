@@ -2,6 +2,7 @@
 
 import * as vscode from "vscode";
 import random = require("lodash/random");
+import has = require("lodash/has");
 
 function getSettings(): {
   userSettings: vscode.WorkspaceConfiguration;
@@ -20,13 +21,22 @@ function changeTheme(userSettings: vscode.WorkspaceConfiguration, extensionConfi
   vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
 
+function getInstalledThemes(): string[] {
+  return vscode.extensions.all.reduce((acc, ext) => {
+    const isTheme = has(ext, "packageJSON.contributes.themes");
+    if (!isTheme) return acc;
+    const themeNames = ext.packageJSON.contributes.themes.map(th => th.id || th.label);
+    return acc.concat(themeNames);
+  }, []);
+}
+
 function getThemeList(
   extensionConfig: vscode.WorkspaceConfiguration,
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
   const themeList: string[] | undefined = extensionConfig.get("themeList");
   if (themeList === undefined || themeList.length === 0) {
-    return ["Default Dark+", "Default Light+"];
+    return getInstalledThemes();
   }
   const currentTheme = userSettings.get("workbench.colorTheme", "");
   return themeList.filter(theme => theme !== currentTheme);
