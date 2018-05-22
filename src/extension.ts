@@ -34,8 +34,8 @@ function getThemeList(
   extensionConfig: vscode.WorkspaceConfiguration,
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
-  const themeList: string[] | undefined = extensionConfig.get("themeList");
-  if (themeList === undefined || themeList.length === 0) {
+  const themeList: string[] = extensionConfig.get("themeList", []);
+  if (themeList.length === 0) {
     return getInstalledThemes();
   }
   const currentTheme = userSettings.get("workbench.colorTheme", "");
@@ -50,6 +50,16 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(switchTheme);
+
+  let copyThemesToSettings = vscode.commands.registerCommand("randomThemeSwitcher.copyInstalledThemes", () => {
+    const installedThemes = getInstalledThemes();
+    const { userSettings } = getSettings();
+    userSettings.update("randomThemeSwitcher.themeList", installedThemes, true);
+    vscode.window.showInformationMessage(`Copied ${installedThemes.length} themes to settings`);
+  });
+
+  context.subscriptions.push(copyThemesToSettings);
+
   const { extensionConfig, userSettings } = getSettings();
 
   const isActive = extensionConfig.get("switchOnOpen");
