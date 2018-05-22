@@ -39,6 +39,10 @@ function getThemeList(
     return getInstalledThemes();
   }
   const currentTheme = userSettings.get("workbench.colorTheme", "");
+  if (themeList.length === 1) {
+    vscode.window.showInformationMessage("Why only one theme ç_ç");
+    return themeList;
+  }
   return themeList.filter(theme => theme !== currentTheme);
 }
 
