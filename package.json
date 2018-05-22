@@ -18,6 +18,14 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "random",
+        "switcher",
+        "changer",
+        "theme switcher",
+        "theme changer",
+        "startup"
+    ],
     "activationEvents": [
         "onCommand:randomThemeSwitcher.switchTheme",
         "onCommand:randomThemeSwitcher.copyInstalledThemes",
