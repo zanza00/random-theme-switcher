@@ -4,10 +4,16 @@ A simple extension that chooses and applies a *random* theme.
 
 ## Features
 
+### Change theme on command
+
 - Open the command palette and search for `random`
 - Choose `Random Theme: Switch to a Random Theme`
 
 ![Change the current Theme](media/rtm.gif)
+
+### Change theme when code starts
+
+- Open a new window and, after a few seconds, behold the new theme!
 
 ## Extension Settings
 
@@ -15,7 +21,9 @@ This extension choos a random theme from a list in the user settngs.
 
 * `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when code is opened.
 
-* `randomThemeSwitcher.themeList`: a list of string with the exact same name of `"workbench.colorTheme"`
+* `randomThemeSwitcher.themeList`: a list of string with labels of themes.
+
+For easy setup use the command __Copy all installed themes in settings__
 
 example:
 
@@ -31,7 +39,7 @@ example:
 ],
 ```
 
-for now this process is manual
+
 
 ## TODO
 
