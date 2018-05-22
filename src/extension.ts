@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(switchTheme);
   const { extensionConfig, userSettings } = getSettings();
 
-  const isActive = extensionConfig.get("switchOnStart");
+  const isActive = extensionConfig.get("switchOnOpen");
 
   if (isActive) {
     changeTheme(userSettings, extensionConfig);

@@ -36,7 +36,7 @@
           "description": "List of themes from which one random theme is selected",
           "type": "array"
         },
-        "randomThemeSwitcher.switchOnStart" :{
+        "randomThemeSwitcher.switchOnOpen" :{
           "type": "boolean",
           "description": "When active it will change theme when code is opened",
           "default": "true"
