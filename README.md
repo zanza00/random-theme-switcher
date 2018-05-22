@@ -13,6 +13,8 @@ A simple extension that chooses and applies a *random* theme.
 
 This extension choos a random theme from a list in the user settngs.
 
+* `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when code is opened.
+
 * `randomThemeSwitcher.themeList`: a list of string with the exact same name of `"workbench.colorTheme"`
 
 example:
@@ -33,12 +35,16 @@ for now this process is manual
 
 ## TODO
 
-- [ ] Change theme at startup.
+- [x] Change theme at startup.
 - [ ] Add the current theme to the theme list
 - [ ] If no list is provided use the installed themes
 - [ ] Add key chord for changing theme
 
 ## Release Notes
+
+## 0.0.2
+
+- Theme now change every time the editor opens
 
 ### 0.0.1
 

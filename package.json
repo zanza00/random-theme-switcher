@@ -16,7 +16,10 @@
     "vscode": "^1.23.0"
   },
   "categories": ["Other"],
-  "activationEvents": ["onCommand:randomThemeSwitcher.switchTheme"],
+  "activationEvents": [
+    "onCommand:randomThemeSwitcher.switchTheme",
+    "*"
+  ],
   "main": "./out/extension",
   "contributes": {
     "commands": [
@@ -32,6 +35,11 @@
           "default": ["Default Dark+", "Default Light+"],
           "description": "List of themes from which one random theme is selected",
           "type": "array"
+        },
+        "randomThemeSwitcher.switchOnOpen" :{
+          "type": "boolean",
+          "description": "When active it will change theme when code is opened",
+          "default": "true"
         }
       }
     }
