@@ -4,6 +4,7 @@
     "description": "A simple extension that randomly choose a theme",
     "version": "0.0.2",
     "publisher": "zanza00",
+    "icon": "icon/rts.png",
     "author": {
         "name": "Simone Picciani",
         "email": "zanza00@gmail.com"
@@ -18,8 +19,17 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "random",
+        "switcher",
+        "changer",
+        "theme switcher",
+        "theme changer",
+        "startup"
+    ],
     "activationEvents": [
         "onCommand:randomThemeSwitcher.switchTheme",
+        "onCommand:randomThemeSwitcher.copyInstalledThemes",
         "*"
     ],
     "main": "./out/extension",
@@ -28,17 +38,18 @@
             {
                 "command": "randomThemeSwitcher.switchTheme",
                 "title": "Random Theme: Switch to a Random Theme"
+            },
+            {
+                "command": "randomThemeSwitcher.copyInstalledThemes",
+                "title": "Random Theme: Copy all installed themes in settings"
             }
         ],
         "configuration": {
             "title": "Random Theme Switcher configuration list",
             "properties": {
                 "randomThemeSwitcher.themeList": {
-                    "default": [
-                        "Default Dark+",
-                        "Default Light+"
-                    ],
-                    "description": "List of themes from which one random theme is selected",
+                    "default": [],
+                    "description": "List of themes from which one random theme is selected, to popuulate use the command 'copy installed themes'",
                     "type": "array"
                 },
                 "randomThemeSwitcher.switchOnOpen": {

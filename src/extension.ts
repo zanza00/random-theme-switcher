@@ -2,6 +2,7 @@
 
 import * as vscode from "vscode";
 import random = require("lodash/random");
+import has = require("lodash/has");
 
 function getSettings(): {
   userSettings: vscode.WorkspaceConfiguration;
@@ -20,15 +21,28 @@ function changeTheme(userSettings: vscode.WorkspaceConfiguration, extensionConfi
   vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
 
+function getInstalledThemes(): string[] {
+  return vscode.extensions.all.reduce((acc, ext) => {
+    const isTheme = has(ext, "packageJSON.contributes.themes");
+    if (!isTheme) return acc;
+    const themeNames = ext.packageJSON.contributes.themes.map(th => th.id || th.label);
+    return acc.concat(themeNames);
+  }, []);
+}
+
 function getThemeList(
   extensionConfig: vscode.WorkspaceConfiguration,
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
-  const themeList: string[] | undefined = extensionConfig.get("themeList");
-  if (themeList === undefined || themeList.length === 0) {
-    return ["Default Dark+", "Default Light+"];
+  const themeList: string[] = extensionConfig.get("themeList", []);
+  if (themeList.length === 0) {
+    return getInstalledThemes();
   }
   const currentTheme = userSettings.get("workbench.colorTheme", "");
+  if (themeList.length === 1) {
+    vscode.window.showInformationMessage("Why only one theme ç_ç");
+    return themeList;
+  }
   return themeList.filter(theme => theme !== currentTheme);
 }
 
@@ -40,6 +54,16 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(switchTheme);
+
+  let copyThemesToSettings = vscode.commands.registerCommand("randomThemeSwitcher.copyInstalledThemes", () => {
+    const installedThemes = getInstalledThemes();
+    const { userSettings } = getSettings();
+    userSettings.update("randomThemeSwitcher.themeList", installedThemes, true);
+    vscode.window.showInformationMessage(`Copied ${installedThemes.length} themes to settings`);
+  });
+
+  context.subscriptions.push(copyThemesToSettings);
+
   const { extensionConfig, userSettings } = getSettings();
 
   const isActive = extensionConfig.get("switchOnOpen");
