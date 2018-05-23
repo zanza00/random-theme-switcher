@@ -30,13 +30,19 @@ function getInstalledThemes(): string[] {
   }, []);
 }
 
+function saveThemes(userSettings: vscode.WorkspaceConfiguration, themes: string[]) {
+  userSettings.update("randomThemeSwitcher.themeList", themes, true);
+}
+
 function getThemeList(
   extensionConfig: vscode.WorkspaceConfiguration,
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
   const themeList: string[] = extensionConfig.get("themeList", []);
   if (themeList.length === 0) {
-    return getInstalledThemes();
+    const installedThemes = getInstalledThemes();
+    saveThemes(userSettings, installedThemes);
+    return installedThemes;
   }
   const currentTheme = userSettings.get("workbench.colorTheme", "");
   if (themeList.length === 1) {
