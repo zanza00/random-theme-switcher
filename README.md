@@ -9,7 +9,7 @@ A simple extension that chooses and applies a *random* theme.
 - Open the command palette and search for `random`
 - Choose `Random Theme: Switch to a Random Theme`
 
-![Change the current Theme](media/rtm.gif)
+![Change the current Theme](media/rts.gif)
 
 ### Change theme when vscode starts
 
@@ -21,7 +21,7 @@ A simple extension that chooses and applies a *random* theme.
 
 * `randomThemeSwitcher.themeList`: a list of string with labels of themes.
 
-For easy setup use the command __Copy all installed themes in settings__
+> __PROTIP:__ For easy setup use the command `Random Theme: Copy all installed themes in settings`
 
 example:
 
@@ -34,7 +34,7 @@ example:
         "Ayu Dark",
         "One Monokai",
         "Night Owl"
-],
+]
 ```
 
 ## TODO
