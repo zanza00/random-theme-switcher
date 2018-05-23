@@ -34,8 +34,9 @@ function getInstalledThemes(): string[] {
   }, []);
 }
 
-function saveThemes(userSettings: vscode.WorkspaceConfiguration, themes: string[]) {
+function saveThemes(themes: string[], userSettings = getUserSettings()): void {
   userSettings.update("randomThemeSwitcher.themeList", themes, true);
+  vscode.window.showInformationMessage(`Copied ${themes.length} themes to settings`);
 }
 
 function getThemeList(
@@ -43,16 +44,19 @@ function getThemeList(
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
   const themeList: string[] = extensionConfig.get("themeList", []);
+
   if (themeList.length === 0) {
     const installedThemes = getInstalledThemes();
-    saveThemes(userSettings, installedThemes);
+    saveThemes(installedThemes, userSettings);
     return installedThemes;
   }
+
   const currentTheme = userSettings.get("workbench.colorTheme", "");
   if (themeList.length === 1) {
     vscode.window.showInformationMessage("Why only one theme ç_ç");
     return themeList;
   }
+
   return themeList.filter(theme => theme !== currentTheme);
 }
 
@@ -65,9 +69,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   let copyThemesToSettings = vscode.commands.registerCommand("randomThemeSwitcher.copyInstalledThemes", () => {
     const installedThemes = getInstalledThemes();
-    const userSettings = getUserSettings();
-    userSettings.update("randomThemeSwitcher.themeList", installedThemes, true);
-    vscode.window.showInformationMessage(`Copied ${installedThemes.length} themes to settings`);
+
+    saveThemes(installedThemes);
   });
 
   context.subscriptions.push(copyThemesToSettings);
