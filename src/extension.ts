@@ -4,19 +4,19 @@ import * as vscode from "vscode";
 import random = require("lodash/random");
 import has = require("lodash/has");
 
-function getSettings(): {
-  userSettings: vscode.WorkspaceConfiguration;
-  extensionConfig: vscode.WorkspaceConfiguration;
-} {
-  const userSettings = vscode.workspace.getConfiguration();
-  const extensionConfig = vscode.workspace.getConfiguration("randomThemeSwitcher");
-  return { userSettings, extensionConfig };
+function getUserSettings(): vscode.WorkspaceConfiguration {
+  return vscode.workspace.getConfiguration();
 }
 
-function changeTheme(userSettings: vscode.WorkspaceConfiguration, extensionConfig: vscode.WorkspaceConfiguration) {
+function getExtensionConfig(): vscode.WorkspaceConfiguration {
+  return vscode.workspace.getConfiguration("randomThemeSwitcher");
+}
+
+function changeTheme({ extensionConfig = getExtensionConfig(), userSettings = getUserSettings() } = {}) {
   const themeList = getThemeList(extensionConfig, userSettings);
   const i = random(themeList.length - 1);
   const newTheme = themeList[i];
+
   userSettings.update("workbench.colorTheme", newTheme, true);
   vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
@@ -24,10 +24,19 @@ function changeTheme(userSettings: vscode.WorkspaceConfiguration, extensionConfi
 function getInstalledThemes(): string[] {
   return vscode.extensions.all.reduce((acc, ext) => {
     const isTheme = has(ext, "packageJSON.contributes.themes");
+
     if (!isTheme) return acc;
-    const themeNames = ext.packageJSON.contributes.themes.map(th => th.id || th.label);
+
+    const themeNames = ext.packageJSON.contributes.themes.map(
+      (th: { id: string; label: string; [key: string]: string }) => th.id || th.label
+    );
     return acc.concat(themeNames);
   }, []);
+}
+
+function saveThemes(themes: string[], userSettings = getUserSettings()): void {
+  userSettings.update("randomThemeSwitcher.themeList", themes, true);
+  vscode.window.showInformationMessage(`Copied ${themes.length} themes to settings`);
 }
 
 function getThemeList(
@@ -35,41 +44,43 @@ function getThemeList(
   userSettings: vscode.WorkspaceConfiguration
 ): string[] {
   const themeList: string[] = extensionConfig.get("themeList", []);
+
   if (themeList.length === 0) {
-    return getInstalledThemes();
+    const installedThemes = getInstalledThemes();
+    saveThemes(installedThemes, userSettings);
+    return installedThemes;
   }
+
   const currentTheme = userSettings.get("workbench.colorTheme", "");
   if (themeList.length === 1) {
     vscode.window.showInformationMessage("Why only one theme ç_ç");
     return themeList;
   }
+
   return themeList.filter(theme => theme !== currentTheme);
 }
 
 export function activate(context: vscode.ExtensionContext) {
   let switchTheme = vscode.commands.registerCommand("randomThemeSwitcher.switchTheme", () => {
-    const { extensionConfig, userSettings } = getSettings();
-
-    changeTheme(userSettings, extensionConfig);
+    changeTheme();
   });
 
   context.subscriptions.push(switchTheme);
 
   let copyThemesToSettings = vscode.commands.registerCommand("randomThemeSwitcher.copyInstalledThemes", () => {
     const installedThemes = getInstalledThemes();
-    const { userSettings } = getSettings();
-    userSettings.update("randomThemeSwitcher.themeList", installedThemes, true);
-    vscode.window.showInformationMessage(`Copied ${installedThemes.length} themes to settings`);
+
+    saveThemes(installedThemes);
   });
 
   context.subscriptions.push(copyThemesToSettings);
 
-  const { extensionConfig, userSettings } = getSettings();
+  const extensionConfig = getExtensionConfig();
 
   const isActive = extensionConfig.get("switchOnOpen");
 
   if (isActive) {
-    changeTheme(userSettings, extensionConfig);
+    changeTheme({ extensionConfig });
   }
 }
 
