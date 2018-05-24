@@ -47,12 +47,12 @@
             "properties": {
                 "randomThemeSwitcher.themeList": {
                     "default": [],
-                    "description": "List of themes from which one random theme is selected, to popuulate use the command 'copy installed themes'",
+                    "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
                     "type": "array"
                 },
                 "randomThemeSwitcher.switchOnOpen": {
                     "type": "boolean",
-                    "description": "When active it will change theme when code is opened",
+                    "description": "When active it will change theme whenever code is opened",
                     "default": "true"
                 }
             }
