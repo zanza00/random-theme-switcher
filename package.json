@@ -53,7 +53,7 @@
                 "randomThemeSwitcher.switchOnOpen": {
                     "type": "boolean",
                     "description": "When active it will change theme whenever code is opened",
-                    "default": "true"
+                    "default": true
                 }
             }
         }
