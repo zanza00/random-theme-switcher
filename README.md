@@ -46,6 +46,10 @@ example:
 
 ## Release Notes
 
+## 0.1.2
+
+- Fixes reload when applying Material Theme.
+
 ## 0.1.1
 
 - If no theme list is found all the installed themes will be automatically copied to settings.
