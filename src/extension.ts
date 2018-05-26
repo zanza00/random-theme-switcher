@@ -39,12 +39,12 @@ async function changeTheme({
   const i = random(themeList.length - 1);
   const newTheme = themeList[i];
 
-  if (MATERIAL_LIST.includes(newTheme) && context !== undefined) {
+  if (MATERIAL_LIST.findIndex(mat => mat === newTheme) && context !== undefined) {
     await context.globalState.update(LAST_THEME_MATERIAL, true);
   }
 
   await userSettings.update("workbench.colorTheme", newTheme, true);
-  vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
+  await vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
 
 function getInstalledThemes(): string[] {
