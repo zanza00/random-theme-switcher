@@ -17,15 +17,15 @@ A simple extension that chooses and applies a *random* theme.
 
 ## Extension Settings
 
-* `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when vscode is opened.
+- `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when vscode is opened.
 
-* `randomThemeSwitcher.themeList`: a list of string with labels of themes.
+- `randomThemeSwitcher.themeList`: a list of string with labels of themes.
 
 > __PROTIP:__ For easy setup use the command `Random Theme: Copy all installed themes in settings`
 
 example:
 
-```
+```json
 "randomThemeSwitcher.themeList": [
         "Andromeda Italic",
         "Cobalt2",
@@ -41,10 +41,15 @@ example:
 
 - [x] Change theme at startup.
 - [x] If no list is provided use the installed themes.
-- [ ] Add or remove the current theme to the theme list.
-- [ ] Add key chord for changing theme.
+- [x] Add or remove the current theme to the theme list.
+- [x] Add key chord for changing theme.
 
 ## Release Notes
+
+## 0.1.3
+
+- Added key chord for changing theme `cmd+k cmd+shift+t`
+- Added command to add and remove current theme from lists
 
 ## 0.1.2
 

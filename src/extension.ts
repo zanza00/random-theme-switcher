@@ -18,6 +18,27 @@ const MATERIAL_LIST = [
   'Material Theme Lighter High Contrast'
 ];
 
+type ThemeObject = { id: string; label: string; [key: string]: string };
+type SaveThemeMessage = 'copyall' | 'removedtheme' | 'addedtheme';
+
+function getSaveMessages(
+  messageType: SaveThemeMessage,
+  opts: { number?: number; theme?: string } = { number: 0, theme: '' }
+): string {
+  switch (messageType) {
+    case 'copyall':
+      return `Copied ${opts.number} themes to settings`;
+    case 'addedtheme':
+      return `Added ${opts.theme} to Random Theme List in settings`;
+    case 'removedtheme':
+      return `Removed ${opts.theme} from Random Theme List in settings`;
+  }
+}
+
+function getThemeName(theme: ThemeObject): string {
+  return theme.id || theme.label;
+}
+
 function getUserSettings(): vscode.WorkspaceConfiguration {
   return vscode.workspace.getConfiguration();
 }
@@ -53,16 +74,20 @@ function getInstalledThemes(): string[] {
 
     if (!isTheme) return acc;
 
-    const themeNames = ext.packageJSON.contributes.themes.map(
-      (th: { id: string; label: string; [key: string]: string }) => th.id || th.label
-    );
+    const themeNames = ext.packageJSON.contributes.themes.map(getThemeName);
     return acc.concat(themeNames);
   }, []);
 }
 
-async function saveThemes(themes: string[], userSettings = getUserSettings()): Promise<void> {
+async function saveThemes(
+  themes: string[],
+  messageType: SaveThemeMessage,
+  messageTheme?: string,
+  userSettings = getUserSettings()
+): Promise<void> {
   await userSettings.update('randomThemeSwitcher.themeList', themes, true);
-  vscode.window.showInformationMessage(`Copied ${themes.length} themes to settings`);
+
+  vscode.window.showInformationMessage(getSaveMessages(messageType, { number: themes.length, theme: messageTheme }));
 }
 
 function getThemeList(
@@ -73,7 +98,7 @@ function getThemeList(
 
   if (themeList.length === 0) {
     const installedThemes = getInstalledThemes();
-    saveThemes(installedThemes, userSettings);
+    saveThemes(installedThemes, 'copyall');
     return installedThemes;
   }
 
@@ -86,6 +111,26 @@ function getThemeList(
   return themeList.filter(theme => theme !== currentTheme);
 }
 
+function addCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()) {
+  const themeList = getThemeList(extensionConfig, userSettings);
+
+  const currentThemeName: string | undefined = userSettings.get('workbench.colorTheme');
+
+  if (typeof currentThemeName !== 'undefined') {
+    saveThemes(themeList.concat(currentThemeName).sort(), 'addedtheme', currentThemeName);
+  }
+}
+
+function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()) {
+  const themeList = getThemeList(extensionConfig, userSettings);
+
+  const currentThemeName: string | undefined = userSettings.get('workbench.colorTheme');
+
+  if (typeof currentThemeName !== 'undefined') {
+    saveThemes(themeList.filter(th => th !== currentThemeName), 'removedtheme', currentThemeName);
+  }
+}
+
 export async function activate(context: vscode.ExtensionContext) {
   let switchTheme = vscode.commands.registerCommand('randomThemeSwitcher.switchTheme', () => {
     changeTheme();
@@ -96,10 +141,18 @@ export async function activate(context: vscode.ExtensionContext) {
   let copyThemesToSettings = vscode.commands.registerCommand('randomThemeSwitcher.copyInstalledThemes', () => {
     const installedThemes = getInstalledThemes();
 
-    saveThemes(installedThemes);
+    saveThemes(installedThemes, 'copyall');
   });
 
   context.subscriptions.push(copyThemesToSettings);
+
+  vscode.commands.registerCommand('randomThemeSwitcher.addCurrentTheme', () => {
+    addCurrentTheme();
+  });
+
+  vscode.commands.registerCommand('randomThemeSwitcher.removeCurrentTheme', () => {
+    removeCurrentTheme();
+  });
 
   const extensionConfig = getExtensionConfig();
 

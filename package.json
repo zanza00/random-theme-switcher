@@ -40,7 +40,22 @@
             {
                 "command": "randomThemeSwitcher.copyInstalledThemes",
                 "title": "Random Theme: Copy all installed themes in settings"
+            },
+            {
+                "command": "randomThemeSwitcher.addCurrentTheme",
+                "title": "Random Theme: Add current theme to settings"
+            },
+            {
+                "command": "randomThemeSwitcher.removeCurrentTheme",
+                "title": "Random Theme: Remove current theme from settings"
             }
+        ],
+        "keybindings":[
+          {
+            "command": "randomThemeSwitcher.switchTheme",
+            "key": "ctrl+k ctrl+shift+t",
+            "mac": "cmd+k cmd+shift+t"
+          }
         ],
         "configuration": {
             "title": "Random Theme Switcher configuration list",
