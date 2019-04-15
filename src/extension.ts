@@ -146,13 +146,17 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(copyThemesToSettings);
 
-  vscode.commands.registerCommand('randomThemeSwitcher.addCurrentTheme', () => {
+  const addCurrentThemeToSettogs = vscode.commands.registerCommand('randomThemeSwitcher.addCurrentTheme', () => {
     addCurrentTheme();
   });
 
-  vscode.commands.registerCommand('randomThemeSwitcher.removeCurrentTheme', () => {
+  context.subscriptions.push(addCurrentThemeToSettogs);
+
+  const removeCurrentThemeToSettogs = vscode.commands.registerCommand('randomThemeSwitcher.removeCurrentTheme', () => {
     removeCurrentTheme();
   });
+
+  context.subscriptions.push(removeCurrentThemeToSettogs);
 
   const extensionConfig = getExtensionConfig();
 
