@@ -2,7 +2,7 @@
     "name": "random-theme-switcher",
     "displayName": "Random Theme Switcher",
     "description": "A simple extension that randomly choose a theme",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "publisher": "zanza00",
     "icon": "icon/rts.png",
     "author": {
@@ -50,12 +50,12 @@
                 "title": "Random Theme: Remove current theme from settings"
             }
         ],
-        "keybindings":[
-          {
-            "command": "randomThemeSwitcher.switchTheme",
-            "key": "ctrl+k ctrl+shift+t",
-            "mac": "cmd+k cmd+shift+t"
-          }
+        "keybindings": [
+            {
+                "command": "randomThemeSwitcher.switchTheme",
+                "key": "ctrl+k ctrl+shift+t",
+                "mac": "cmd+k cmd+shift+t"
+            }
         ],
         "configuration": {
             "title": "Random Theme Switcher configuration list",
