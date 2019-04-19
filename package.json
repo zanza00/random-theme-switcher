@@ -1,93 +1,99 @@
 {
-    "name": "random-theme-switcher",
-    "displayName": "Random Theme Switcher",
-    "description": "A simple extension that randomly choose a theme",
-    "version": "0.1.3",
-    "publisher": "zanza00",
-    "icon": "icon/rts.png",
-    "author": {
-        "name": "Simone Picciani",
-        "email": "zanza00@gmail.com"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/zanza00/random-theme-switcher"
-    },
-    "engines": {
-        "vscode": "^1.23.0"
-    },
-    "categories": [
-        "Other"
+  "name": "random-theme-switcher",
+  "displayName": "Random Theme Switcher",
+  "description": "A simple extension that randomly choose a theme",
+  "version": "0.1.3",
+  "publisher": "zanza00",
+  "icon": "icon/rts.png",
+  "author": {
+    "name": "Simone Picciani",
+    "email": "zanza00@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zanza00/random-theme-switcher"
+  },
+  "engines": {
+    "vscode": "^1.23.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "random",
+    "theme switcher",
+    "theme changer",
+    "startup"
+  ],
+  "activationEvents": [
+    "onCommand:randomThemeSwitcher.switchTheme",
+    "onCommand:randomThemeSwitcher.copyInstalledThemes",
+    "*"
+  ],
+  "main": "./dist/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "randomThemeSwitcher.switchTheme",
+        "title": "Random Theme: Switch to a Random Theme"
+      },
+      {
+        "command": "randomThemeSwitcher.copyInstalledThemes",
+        "title": "Random Theme: Copy all installed themes in settings"
+      },
+      {
+        "command": "randomThemeSwitcher.addCurrentTheme",
+        "title": "Random Theme: Add current theme to settings"
+      },
+      {
+        "command": "randomThemeSwitcher.removeCurrentTheme",
+        "title": "Random Theme: Remove current theme from settings"
+      }
     ],
-    "keywords": [
-        "random",
-        "theme switcher",
-        "theme changer",
-        "startup"
+    "keybindings": [
+      {
+        "command": "randomThemeSwitcher.switchTheme",
+        "key": "ctrl+k ctrl+shift+t",
+        "mac": "cmd+k cmd+shift+t"
+      }
     ],
-    "activationEvents": [
-        "onCommand:randomThemeSwitcher.switchTheme",
-        "onCommand:randomThemeSwitcher.copyInstalledThemes",
-        "*"
-    ],
-    "main": "./out/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "randomThemeSwitcher.switchTheme",
-                "title": "Random Theme: Switch to a Random Theme"
-            },
-            {
-                "command": "randomThemeSwitcher.copyInstalledThemes",
-                "title": "Random Theme: Copy all installed themes in settings"
-            },
-            {
-                "command": "randomThemeSwitcher.addCurrentTheme",
-                "title": "Random Theme: Add current theme to settings"
-            },
-            {
-                "command": "randomThemeSwitcher.removeCurrentTheme",
-                "title": "Random Theme: Remove current theme from settings"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "randomThemeSwitcher.switchTheme",
-                "key": "ctrl+k ctrl+shift+t",
-                "mac": "cmd+k cmd+shift+t"
-            }
-        ],
-        "configuration": {
-            "title": "Random Theme Switcher configuration list",
-            "properties": {
-                "randomThemeSwitcher.themeList": {
-                    "default": [],
-                    "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
-                    "type": "array"
-                },
-                "randomThemeSwitcher.switchOnOpen": {
-                    "type": "boolean",
-                    "description": "When active it will change theme whenever code is opened",
-                    "default": true
-                }
-            }
+    "configuration": {
+      "title": "Random Theme Switcher configuration list",
+      "properties": {
+        "randomThemeSwitcher.themeList": {
+          "default": [],
+          "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
+          "type": "array"
+        },
+        "randomThemeSwitcher.switchOnOpen": {
+          "type": "boolean",
+          "description": "When active it will change theme whenever code is opened",
+          "default": true
         }
-    },
-    "scripts": {
-        "vscode:prepublish": "yarn run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "yarn run compile && node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^10.12.21",
-        "tslint": "^5.12.1",
-        "typescript": "^3.3.1",
-        "vscode": "^1.1.33"
-    },
-    "dependencies": {
-        "fp-ts": "^1.17.0"
+      }
     }
+  },
+  "scripts": {
+    "package": "npx vsce package",
+    "publish": "npx vsce publish",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode none",
+    "webpack-dev": "webpack --mode none --watch",
+    "test-compile": "tsc -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^10.12.21",
+    "prettier": "^1.17.0",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.33",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
+  },
+  "dependencies": {
+    "fp-ts": "^1.17.0"
+  }
 }
