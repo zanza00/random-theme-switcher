@@ -1,8 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import random = require('lodash/random');
-import has = require('lodash/has');
+import { fromNullable, Option } from 'fp-ts/lib/Option';
+import { getRandomInt } from './utils';
 
 const LAST_THEME_MATERIAL = 'last-theme-is-material';
 const MATERIAL_LIST = [
@@ -57,7 +57,7 @@ async function changeTheme({
   userSettings?: vscode.WorkspaceConfiguration;
 } = {}) {
   const themeList = getThemeList(extensionConfig, userSettings);
-  const i = random(themeList.length - 1);
+  const i = getRandomInt(themeList.length - 1);
   const newTheme = themeList[i];
 
   if (MATERIAL_LIST.findIndex(mat => mat === newTheme) && context !== undefined) {
@@ -69,14 +69,16 @@ async function changeTheme({
 }
 
 function getInstalledThemes(): string[] {
-  return vscode.extensions.all.reduce((acc, ext) => {
-    const isTheme = has(ext, 'packageJSON.contributes.themes');
+  return vscode.extensions.all.reduce(
+    (acc, ext) => {
+      const themeInfo: Option<Array<ThemeObject>> = fromNullable(ext.packageJSON.contributes.themes);
 
-    if (!isTheme) return acc;
-
-    const themeNames = ext.packageJSON.contributes.themes.map(getThemeName);
-    return acc.concat(themeNames);
-  }, []);
+      return themeInfo.fold(acc, themes => {
+        return acc.concat(themes.map(getThemeName));
+      });
+    },
+    [] as Array<string>
+  );
 }
 
 async function saveThemes(
@@ -132,13 +134,13 @@ function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSettings
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  let switchTheme = vscode.commands.registerCommand('randomThemeSwitcher.switchTheme', () => {
+  const switchTheme = vscode.commands.registerCommand('randomThemeSwitcher.switchTheme', () => {
     changeTheme();
   });
 
   context.subscriptions.push(switchTheme);
 
-  let copyThemesToSettings = vscode.commands.registerCommand('randomThemeSwitcher.copyInstalledThemes', () => {
+  const copyThemesToSettings = vscode.commands.registerCommand('randomThemeSwitcher.copyInstalledThemes', () => {
     const installedThemes = getInstalledThemes();
 
     saveThemes(installedThemes, 'copyall');
