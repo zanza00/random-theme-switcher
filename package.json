@@ -65,10 +65,24 @@
           "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
           "type": "array"
         },
-        "randomThemeSwitcher.switchOnOpen": {
-          "type": "boolean",
-          "description": "When active it will change theme whenever code is opened",
+        "randomThemeSwitcher.switchMode": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "startup",
+            "daily"
+          ],
+          "enumDescriptions": [
+            "No automatic switch is performed",
+            "When active it will change theme whenever vscode is opened",
+            "When active it will change theme once a day"
+          ],
+          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis",
           "default": true
+        },
+        "randomThemeSwitcher.lastSwitchDay": {
+          "type": "number",
+          "description": "Last switch day (used in the switchMode daily)"
         }
       }
     }

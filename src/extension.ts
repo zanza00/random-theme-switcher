@@ -5,6 +5,7 @@ import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { getRandomInt } from './utils';
 
 const LAST_THEME_MATERIAL = 'last-theme-is-material';
+const LAST_SWITCH_DAY = 'lastSwitchDay';
 const MATERIAL_LIST = [
   'Material Theme',
   'Material Theme High Contrast',
@@ -65,7 +66,7 @@ async function changeTheme({
   }
 
   await userSettings.update('workbench.colorTheme', newTheme, true);
-  await vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
+  vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
 }
 
 function getInstalledThemes(): string[] {
@@ -160,13 +161,33 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(removeCurrentThemeToSettogs);
 
+  context.subscriptions.push(
+    // it listen for theme manual switches, then update the LAST_THEME_MATERIAL settings.
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration('workbench.colorTheme')) {
+        const userSettings = getUserSettings();
+        const currentTheme = userSettings.get('workbench.colorTheme', '');
+        context.globalState.update(LAST_THEME_MATERIAL, MATERIAL_LIST.findIndex(mat => mat === currentTheme) !== -1);
+      }
+    })
+  );
+
   const extensionConfig = getExtensionConfig();
 
   const isLastThemeMaterial = context.globalState.get(LAST_THEME_MATERIAL, false);
-  const isActive = extensionConfig.get('switchOnOpen');
+  const switchMode = extensionConfig.get('switchMode', 'manual');
 
-  if (isActive && !isLastThemeMaterial) {
+  if (switchMode !== 'manual' && !isLastThemeMaterial) {
+    let lastSwitchDay = extensionConfig.get(LAST_SWITCH_DAY);
+    let today = new Date().getDay();
+
+    if (switchMode !== 'daily' || today !== lastSwitchDay) {
     await changeTheme({ extensionConfig, context });
+    }
+
+    if (switchMode === 'daily' && today !== lastSwitchDay) {
+      extensionConfig.update(LAST_SWITCH_DAY, today);
+    }
   } else if (isLastThemeMaterial) {
     await context.globalState.update(LAST_THEME_MATERIAL, false);
   }
