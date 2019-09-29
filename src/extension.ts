@@ -19,7 +19,7 @@ const MATERIAL_LIST = [
   'Material Theme Lighter High Contrast'
 ];
 
-type ThemeObject = { id: string; label: string; [key: string]: string };
+type ThemeObject = { id: string; label: string;[key: string]: string };
 type SaveThemeMessage = 'copyall' | 'removedtheme' | 'addedtheme';
 
 function getSaveMessages(
@@ -182,11 +182,16 @@ export async function activate(context: vscode.ExtensionContext) {
     let today = new Date().getDay();
 
     if (switchMode !== 'daily' || today !== lastSwitchDay) {
-    await changeTheme({ extensionConfig, context });
+      await changeTheme({ extensionConfig, context });
     }
 
     if (switchMode === 'daily' && today !== lastSwitchDay) {
       extensionConfig.update(LAST_SWITCH_DAY, today);
+    }
+
+    if (switchMode === 'interval') {
+      const switchInterval = extensionConfig.get('switchInterval', 3);
+      setInterval(() => changeTheme({ extensionConfig, context }), switchInterval * 60000);
     }
   } else if (isLastThemeMaterial) {
     await context.globalState.update(LAST_THEME_MATERIAL, false);
@@ -194,4 +199,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
