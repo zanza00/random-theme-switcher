@@ -75,13 +75,15 @@
             "manual",
             "startup",
             "daily",
-            "interval"
+            "interval",
+            "typing"
           ],
           "enumDescriptions": [
             "No automatic switch is performed",
             "When active it will change theme whenever vscode is opened",
             "When active it will change theme once a day",
-            "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes"
+            "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
+            "When active it will change theme every times a keyboard key is pressed"
           ],
           "description": "Set whether switch automatically the theme at vscode startup, or at daily basis",
           "default": true

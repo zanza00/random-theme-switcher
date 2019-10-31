@@ -57,7 +57,8 @@ async function changeTheme({
   extensionConfig?: vscode.WorkspaceConfiguration;
   userSettings?: vscode.WorkspaceConfiguration;
 } = {}) {
-  const themeList = getThemeList(extensionConfig, userSettings);
+  isSwitching = true;
+
   const i = getRandomInt(themeList.length - 1);
   const newTheme = themeList[i];
 
@@ -65,8 +66,15 @@ async function changeTheme({
     await context.globalState.update(LAST_THEME_MATERIAL, true);
   }
 
-  await userSettings.update('workbench.colorTheme', newTheme, true);
-  vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
+  userSettings.update('workbench.colorTheme', newTheme, true).then(() => {
+    if (switchMode !== 'typing') {
+      vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
+    }
+    else {
+      isSwitching = false;
+    }
+  });
+
 }
 
 function getInstalledThemes(): string[] {
@@ -134,48 +142,43 @@ function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSettings
   }
 }
 
+let switchMode = 'manual';
+let isSwitching = false;
+let themeList: string[] = new Array();
+
 export async function activate(context: vscode.ExtensionContext) {
-  const switchTheme = vscode.commands.registerCommand('randomThemeSwitcher.switchTheme', () => {
-    changeTheme();
-  });
-
-  context.subscriptions.push(switchTheme);
-
-  const copyThemesToSettings = vscode.commands.registerCommand('randomThemeSwitcher.copyInstalledThemes', () => {
-    const installedThemes = getInstalledThemes();
-
-    saveThemes(installedThemes, 'copyall');
-  });
-
-  context.subscriptions.push(copyThemesToSettings);
-
-  const addCurrentThemeToSettogs = vscode.commands.registerCommand('randomThemeSwitcher.addCurrentTheme', () => {
-    addCurrentTheme();
-  });
-
-  context.subscriptions.push(addCurrentThemeToSettogs);
-
-  const removeCurrentThemeToSettogs = vscode.commands.registerCommand('randomThemeSwitcher.removeCurrentTheme', () => {
-    removeCurrentTheme();
-  });
-
-  context.subscriptions.push(removeCurrentThemeToSettogs);
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('randomThemeSwitcher.switchTheme', () => {
+      changeTheme();
+    }),
+    vscode.commands.registerCommand('randomThemeSwitcher.copyInstalledThemes', () => {
+      const installedThemes = getInstalledThemes();
+
+      saveThemes(installedThemes, 'copyall');
+    }),
+    vscode.commands.registerCommand('randomThemeSwitcher.addCurrentTheme', () => {
+      addCurrentTheme();
+    }),
+    vscode.commands.registerCommand('randomThemeSwitcher.removeCurrentTheme', () => {
+      removeCurrentTheme();
+    }),
+
     // it listen for theme manual switches, then update the LAST_THEME_MATERIAL settings.
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const userSettings = getUserSettings();
         const currentTheme = userSettings.get('workbench.colorTheme', '');
         context.globalState.update(LAST_THEME_MATERIAL, MATERIAL_LIST.findIndex(mat => mat === currentTheme) !== -1);
+        themeList = getThemeList(getExtensionConfig(), getUserSettings());
       }
     })
   );
 
   const extensionConfig = getExtensionConfig();
-
   const isLastThemeMaterial = context.globalState.get(LAST_THEME_MATERIAL, false);
-  const switchMode = extensionConfig.get('switchMode', 'manual');
+  themeList = getThemeList(extensionConfig, getUserSettings());
+  switchMode = extensionConfig.get('switchMode', 'manual');
 
   if (switchMode !== 'manual' && !isLastThemeMaterial) {
     let lastSwitchDay = extensionConfig.get(LAST_SWITCH_DAY);
@@ -193,8 +196,17 @@ export async function activate(context: vscode.ExtensionContext) {
       const switchInterval = extensionConfig.get('switchInterval', 3);
       setInterval(() => changeTheme({ extensionConfig, context }), switchInterval * 60000);
     }
+
+    if (switchMode === 'typing') {
+      vscode.workspace.onDidChangeTextDocument(event => {
+        if (!event.contentChanges[0] || isSwitching || event.contentChanges[0].text.length > 1) {
+          return;
+        }
+        changeTheme();
+      });
+    }
   } else if (isLastThemeMaterial) {
-    await context.globalState.update(LAST_THEME_MATERIAL, false);
+    context.globalState.update(LAST_THEME_MATERIAL, false);
   }
 }
 
