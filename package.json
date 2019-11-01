@@ -2,7 +2,7 @@
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
   "description": "A simple extension that randomly choose a theme",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "publisher": "zanza00",
   "icon": "icon/rts.png",
   "author": {
@@ -85,7 +85,7 @@
             "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
             "When active it will change theme every times a keyboard key is pressed"
           ],
-          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis",
+          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis.`nRemember to reload VSC in order to appy the settings",
           "default": true
         },
         "randomThemeSwitcher.lastSwitchDay": {

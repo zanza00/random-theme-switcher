@@ -4,6 +4,22 @@ A simple extension that chooses and applies a *random* theme.
 
 ## Features
 
+* Choose between 5 switch Modes:
+
+| Mode     | Description                                                                         |
+| -------- | ----------------------------------------------------------------------------------- |
+| manual   | No automatic switch is performed                                                    |
+| startup  | When active it will change theme whenever vscode is opened                          |
+| daily    | When active it will change theme once a day                                         |
+| interval | When active it will change theme every `randomThemeSwitcher.switchInterval` minutes |
+| typing   | When active it will change theme every times a keyboard key is pressed              |
+
+> Don't forget to reload VSC for the changes to take effect
+
+* With `randomThemeSwitcher.copyall` command you can copy in batch all the installed themes:
+  * You can narrow the themes' side you want to load
+  * You can optionally specify an exclude regex for theme names
+
 ### Change theme on command
 
 - Open the command palette and search for `random`
@@ -45,6 +61,14 @@ example:
 - [x] Add key chord for changing theme.
 
 ## Release Notes
+
+## 1.0.0
+
+- Improved the code
+- Introduced the `randomThemeSwitcher.switchMode` setting
+- Improved the `randomThemeSwitcher.copyall` command:
+  - Now you can narrow the themes' side you want to load
+  - You can now optionally specify an exclude regex for theme names 
 
 ## 0.1.3
 
