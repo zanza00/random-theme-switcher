@@ -69,7 +69,7 @@ example:
 ## 0.2.1
 
 - Externalized the MATERIAL_LIST into a more customizable `oneMoreTimeThemeList`
-  - With that users can pick up their fauvorites theme and have them one more time (instead of being changed immediately) 
+  - With that users can pick up their favorites theme and have them one more time (instead of being changed immediately) 
 
 ## 0.2.0
 
