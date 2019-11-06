@@ -62,7 +62,7 @@ example:
 
 ## Release Notes
 
-## 1.0.0
+## 0.2.0
 
 - Improved the code
 - Introduced the `randomThemeSwitcher.switchMode` setting
