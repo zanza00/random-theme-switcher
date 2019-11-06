@@ -37,6 +37,10 @@ A simple extension that chooses and applies a *random* theme.
 
 - `randomThemeSwitcher.themeList`: a list of string with labels of themes.
 
+- `oneMoreTimeThemeList`: a list of themes that will be kept one more time before being changed when randomized
+  - default the material theme suite
+  - set to [ ] in order to disable this behaviour
+
 > __PROTIP:__ For easy setup use the command `Random Theme: Copy all installed themes in settings`
 
 example:
@@ -61,6 +65,11 @@ example:
 - [x] Add key chord for changing theme.
 
 ## Release Notes
+
+## 0.2.1
+
+- Externalized the MATERIAL_LIST into a more customizable `oneMoreTimeThemeList`
+  - With that users can pick up their fauvorites theme and have them one more time (instead of being changed immediately) 
 
 ## 0.2.0
 
