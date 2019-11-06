@@ -2,7 +2,7 @@
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
   "description": "A simple extension that randomly choose a theme",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "publisher": "zanza00",
   "icon": "icon/rts.png",
   "author": {
@@ -32,8 +32,7 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "randomThemeSwitcher.switchTheme",
         "title": "Random Theme: Switch to a Random Theme"
       },
@@ -50,25 +49,48 @@
         "title": "Random Theme: Remove current theme from settings"
       }
     ],
-    "keybindings": [
-      {
-        "command": "randomThemeSwitcher.switchTheme",
-        "key": "ctrl+k ctrl+shift+t",
-        "mac": "cmd+k cmd+shift+t"
-      }
-    ],
+    "keybindings": [{
+      "command": "randomThemeSwitcher.switchTheme",
+      "key": "ctrl+k ctrl+shift+t",
+      "mac": "cmd+k cmd+shift+t"
+    }],
     "configuration": {
       "title": "Random Theme Switcher configuration list",
       "properties": {
+        "randomThemeSwitcher.switchInterval": {
+          "default": 15,
+          "description": "Interval in minutes for switching theme automatically. Don't forget to set `randomThemeSwitcher.switchMode` to *interval*",
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 1440
+        },
         "randomThemeSwitcher.themeList": {
           "default": [],
           "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
           "type": "array"
         },
-        "randomThemeSwitcher.switchOnOpen": {
-          "type": "boolean",
-          "description": "When active it will change theme whenever code is opened",
+        "randomThemeSwitcher.switchMode": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "startup",
+            "daily",
+            "interval",
+            "typing"
+          ],
+          "enumDescriptions": [
+            "No automatic switch is performed",
+            "When active it will change theme whenever vscode is opened",
+            "When active it will change theme once a day",
+            "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
+            "When active it will change theme every times a keyboard key is pressed"
+          ],
+          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis.`nRemember to reload VSC in order to appy the settings",
           "default": true
+        },
+        "randomThemeSwitcher.lastSwitchDay": {
+          "type": "number",
+          "description": "Last switch day (used in the switchMode daily)"
         }
       }
     }
