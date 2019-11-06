@@ -14,7 +14,7 @@ function getExtensionConfig(): vscode.WorkspaceConfiguration {
 
 
 async function changeTheme(
-  context?: vscode.ExtensionContext) {
+  context?: vscode.ExtensionContext): Promise<void> {
   isSwitching = true;
 
   const userSettings = getUserSettings();
@@ -53,9 +53,6 @@ async function getInstalledThemes(): Promise<string[]> {
                 });
               }
             }
-            // else {
-            //   console.log('here');//vscode-git-ui
-            // }
             return acc;
           },
           [] as Array<string>
@@ -116,7 +113,7 @@ async function getThemeList(
   });
 }
 
-async function addCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()) {
+async function addCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()): Promise<void> {
   const themeList = await getThemeList(extensionConfig, userSettings);
 
   const currentThemeName: string | undefined = userSettings.get('workbench.colorTheme');
@@ -126,7 +123,7 @@ async function addCurrentTheme(extensionConfig = getExtensionConfig(), userSetti
   }
 }
 
-async function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()) {
+async function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()): Promise<void> {
   const themeList = await getThemeList(extensionConfig, userSettings);
 
   const currentThemeName: string | undefined = userSettings.get('workbench.colorTheme');
@@ -138,11 +135,11 @@ async function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSe
 
 let switchMode: SwitchModes = 'manual';
 let isSwitching = false;
-let themeList: string[] = new Array();
+let themeList: string[] = [];
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
-  let extensionConfig = getExtensionConfig();
+  const extensionConfig = getExtensionConfig();
 
   context.subscriptions.push(
     vscode.commands.registerCommand(CommandsIds.Switch, () => {

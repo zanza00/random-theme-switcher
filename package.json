@@ -2,7 +2,7 @@
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
   "description": "A simple extension that randomly choose a theme",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "publisher": "zanza00",
   "icon": "icon/rts.png",
   "author": {
