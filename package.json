@@ -2,7 +2,7 @@
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
   "description": "A simple extension that randomly choose a theme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "zanza00",
   "icon": "icon/rts.png",
   "author": {
@@ -65,11 +65,13 @@
           "maximum": 1440
         },
         "randomThemeSwitcher.themeList": {
+          "title": "theme list",
           "default": [],
           "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
           "type": "array"
         },
         "randomThemeSwitcher.switchMode": {
+          "title": "switch mode",
           "type": "string",
           "enum": [
             "manual",
@@ -89,8 +91,26 @@
           "default": true
         },
         "randomThemeSwitcher.lastSwitchDay": {
+          "title": "last switch day",
           "type": "number",
           "description": "Last switch day (used in the switchMode daily)"
+        },
+        "randomThemeSwitcher.oneMoreTimeThemeList": {
+          "title": "one more time theme list",
+          "type": "array",
+          "description": "If a theme is listed here it will stay active one more time before it will be changed",
+          "default": [
+            "Material Theme",
+            "Material Theme High Contrast",
+            "Material Theme Darker",
+            "Material Theme Darker High Contrast",
+            "Material Theme Palenight",
+            "Material Theme Palenight High Contrast",
+            "Material Theme Ocean",
+            "Material Theme Ocean High Contrast",
+            "Material Theme Lighter",
+            "Material Theme Lighter High Contrast"
+          ]
         }
       }
     }
