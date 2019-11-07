@@ -32,7 +32,8 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "randomThemeSwitcher.switchTheme",
         "title": "Random Theme: Switch to a Random Theme"
       },
@@ -49,11 +50,13 @@
         "title": "Random Theme: Remove current theme from settings"
       }
     ],
-    "keybindings": [{
-      "command": "randomThemeSwitcher.switchTheme",
-      "key": "ctrl+k ctrl+shift+t",
-      "mac": "cmd+k cmd+shift+t"
-    }],
+    "keybindings": [
+      {
+        "command": "randomThemeSwitcher.switchTheme",
+        "key": "ctrl+k ctrl+shift+t",
+        "mac": "cmd+k cmd+shift+t"
+      }
+    ],
     "configuration": {
       "title": "Random Theme Switcher configuration list",
       "properties": {
@@ -85,8 +88,8 @@
             "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
             "When active it will change theme every times a keyboard key is pressed"
           ],
-          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis.`nRemember to reload VSC in order to appy the settings",
-          "default": true
+          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis. Remember to reload VSC in order to apply the settings",
+          "default": "startup"
         },
         "randomThemeSwitcher.lastSwitchDay": {
           "type": "number",
