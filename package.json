@@ -93,7 +93,8 @@
         "randomThemeSwitcher.lastSwitchDay": {
           "title": "last switch day",
           "type": "number",
-          "description": "Last switch day (used in the switchMode daily)"
+          "description": "Last switch day (used in the switchMode daily)",
+          "scope": "application"
         },
         "randomThemeSwitcher.oneMoreTimeThemeList": {
           "title": "one more time theme list",
