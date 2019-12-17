@@ -24,7 +24,7 @@ export class CommandsIds {
 export class SettingsKeys {
     public static SwitchMode = 'switchMode';
     public static SwitchInterval = 'switchInterval';
-    public static OneMoreTimeThemeList = 'oneMoreTimeThemeList';
+    public static PreventReloadThemeList = 'preventReloadThemeList';
 }
 
 export class Messages {

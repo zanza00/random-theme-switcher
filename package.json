@@ -32,7 +32,8 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "randomThemeSwitcher.switchTheme",
         "title": "Random Theme: Switch to a Random Theme"
       },
@@ -49,11 +50,13 @@
         "title": "Random Theme: Remove current theme from settings"
       }
     ],
-    "keybindings": [{
-      "command": "randomThemeSwitcher.switchTheme",
-      "key": "ctrl+k ctrl+shift+t",
-      "mac": "cmd+k cmd+shift+t"
-    }],
+    "keybindings": [
+      {
+        "command": "randomThemeSwitcher.switchTheme",
+        "key": "ctrl+k ctrl+shift+t",
+        "mac": "cmd+k cmd+shift+t"
+      }
+    ],
     "configuration": {
       "title": "Random Theme Switcher configuration list",
       "properties": {
@@ -96,10 +99,10 @@
           "description": "Last switch day (used in the switchMode daily)",
           "scope": "application"
         },
-        "randomThemeSwitcher.oneMoreTimeThemeList": {
+        "randomThemeSwitcher.preventReloadThemeList": {
           "title": "one more time theme list",
           "type": "array",
-          "description": "If a theme is listed here it will stay active one more time before it will be changed",
+          "description": "Some themes, after they are applied, reload the instance. If they are present in this list the extension will not set a new random theme after they are applied.",
           "default": [
             "Material Theme",
             "Material Theme High Contrast",

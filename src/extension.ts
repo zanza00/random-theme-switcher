@@ -20,9 +20,9 @@ async function changeTheme(
   const userSettings = getUserSettings();
   const i = getRandomInt(themeList.length - 1);
   const newTheme = themeList[i];
-  const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.OneMoreTimeThemeList, MATERIAL_LIST);
+  const preventReloadThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
 
-  if (oneMoreTimeThemeList.findIndex(mat => mat === newTheme) && context !== undefined) {
+  if (preventReloadThemeList.findIndex(mat => mat === newTheme) && context !== undefined) {
     await context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, true);
   }
 
@@ -163,7 +163,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const userSettings = getUserSettings();
         const currentTheme = userSettings.get('workbench.colorTheme', '');
-        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.OneMoreTimeThemeList, MATERIAL_LIST);
+        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
 
         context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, oneMoreTimeThemeList.findIndex(mat => mat === currentTheme) !== -1);
         themeList = await getThemeList(getExtensionConfig(), getUserSettings());
