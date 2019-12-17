@@ -1,5 +1,5 @@
 export const EXTENSION_NAME = 'randomThemeSwitcher';
-export const LAST_THEME_MATERIAL = 'last-theme-is-material';
+export const LAST_THEME_NEEDS_TO_PERSIST = 'last-theme-needs-to-persist';
 export const LAST_SWITCH_DAY = 'lastSwitchDay';
 export const MATERIAL_LIST = [
     'Material Theme',
@@ -24,6 +24,7 @@ export class CommandsIds {
 export class SettingsKeys {
     public static SwitchMode = 'switchMode';
     public static SwitchInterval = 'switchInterval';
+    public static PreventReloadThemeList = 'preventReloadThemeList';
 }
 
 export class Messages {

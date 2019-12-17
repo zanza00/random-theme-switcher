@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { getRandomInt } from './utils';
-import { EXTENSION_NAME, MATERIAL_LIST, LAST_THEME_MATERIAL, Messages, CommandsIds, SettingsKeys, LAST_SWITCH_DAY, ThemeTypes } from './enums';
+import { EXTENSION_NAME, LAST_THEME_NEEDS_TO_PERSIST, Messages, CommandsIds, SettingsKeys, LAST_SWITCH_DAY, ThemeTypes, MATERIAL_LIST } from './enums';
 
 
 function getUserSettings(): vscode.WorkspaceConfiguration {
@@ -20,9 +20,10 @@ async function changeTheme(
   const userSettings = getUserSettings();
   const i = getRandomInt(themeList.length - 1);
   const newTheme = themeList[i];
+  const preventReloadThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
 
-  if (MATERIAL_LIST.findIndex(mat => mat === newTheme) && context !== undefined) {
-    await context.globalState.update(LAST_THEME_MATERIAL, true);
+  if (preventReloadThemeList.findIndex(mat => mat === newTheme) && context !== undefined) {
+    await context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, true);
   }
 
   userSettings.update('workbench.colorTheme', newTheme, true).then(() => {
@@ -162,13 +163,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const userSettings = getUserSettings();
         const currentTheme = userSettings.get('workbench.colorTheme', '');
-        context.globalState.update(LAST_THEME_MATERIAL, MATERIAL_LIST.findIndex(mat => mat === currentTheme) !== -1);
+        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
+
+        context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, oneMoreTimeThemeList.findIndex(mat => mat === currentTheme) !== -1);
         themeList = await getThemeList(getExtensionConfig(), getUserSettings());
       }
     })
   );
 
-  const isLastThemeMaterial = context.globalState.get(LAST_THEME_MATERIAL, false);
+  const isLastThemeMaterial = context.globalState.get(LAST_THEME_NEEDS_TO_PERSIST, false);
   themeList = await getThemeList(extensionConfig, getUserSettings());
   switchMode = extensionConfig.get(SettingsKeys.SwitchMode, 'manual');
 
@@ -197,7 +200,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       });
     }
   } else if (isLastThemeMaterial) {
-    context.globalState.update(LAST_THEME_MATERIAL, false);
+    context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, false);
   }
 }
 

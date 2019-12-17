@@ -37,6 +37,9 @@ A simple extension that chooses and applies a *random* theme.
 
 - `randomThemeSwitcher.themeList`: a list of string with labels of themes.
 
+- `preventReloadThemeList`: some themes, after they are applied, reload the instance. If are present in this list the extension will not set a new random theme after they are applied
+  - default to the material theme suite
+
 > __PROTIP:__ For easy setup use the command `Random Theme: Copy all installed themes in settings`
 
 example:
@@ -61,6 +64,11 @@ example:
 - [x] Add key chord for changing theme.
 
 ## Release Notes
+
+## 0.2.1
+
+- Externalized the MATERIAL_LIST into a more customizable `preventReloadThemeList`
+  - With that users can pick up their favorites theme and have them one more time (instead of being changed immediately) 
 
 ## 0.2.0
 
