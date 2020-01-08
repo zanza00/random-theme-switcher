@@ -184,7 +184,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
 
     if (switchMode === 'daily' && today !== lastSwitchDay) {
-      extensionConfig.update(LAST_SWITCH_DAY, today);
+      extensionConfig.update(LAST_SWITCH_DAY, today, true);
     }
 
     if (switchMode === 'interval') {
