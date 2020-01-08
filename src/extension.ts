@@ -37,10 +37,13 @@ async function changeTheme(
 
 }
 
-async function getInstalledThemes(): Promise<string[]> {
+async function getInstalledThemes(targetTheme: string | undefined = undefined): Promise<string[]> {
 
   const promise = new Promise<string[]>((r, c) => {
-    vscode.window.showQuickPick([ThemeTypes.Both, ThemeTypes.Ligth, ThemeTypes.Dark], { placeHolder: "Choose your side, May the code be with you !" }).then(async (choosedSide) => {
+    vscode.window.showQuickPick([ThemeTypes.Both.key, ThemeTypes.Ligth.key, ThemeTypes.Dark.key], { placeHolder: "Choose your side, May the code be with you !" }).then(async (choosedSide) => {
+      if (choosedSide === ThemeTypes.Ligth.key) { choosedSide = ThemeTypes.Ligth.value; }
+      else if (choosedSide === ThemeTypes.Dark.key) { choosedSide = ThemeTypes.Dark.value; }
+
       const excludeRegexPattern = await vscode.window.showInputBox({ prompt: "Exclude themes that match this RegEx, or just Press `Enter` to ignore and continue" });
       const excludeRegex = excludeRegexPattern ? new RegExp(excludeRegexPattern) : null;
       if (choosedSide) {
@@ -50,7 +53,10 @@ async function getInstalledThemes(): Promise<string[]> {
               const themeInfo: Option<Array<ThemeObject>> = fromNullable(ext.packageJSON.contributes.themes);
               if (themeInfo._tag !== 'None') {
                 return themeInfo.fold(acc, themes => {
-                  return acc.concat(themes.filter((theme) => choosedSide === ThemeTypes.Both || theme.uiTheme === choosedSide).map((theme) => theme.id || theme.label));
+                  if (targetTheme && themes.findIndex(theme => theme.label === targetTheme) === -1) {
+                    return acc;
+                  }
+                  return acc.concat(themes.filter((theme) => choosedSide === ThemeTypes.Both.key || theme.uiTheme === choosedSide).map((theme) => theme.id || theme.label));
                 });
               }
             }
@@ -116,11 +122,18 @@ async function getThemeList(
 
 async function addCurrentTheme(extensionConfig = getExtensionConfig(), userSettings = getUserSettings()): Promise<void> {
   const themeList = await getThemeList(extensionConfig, userSettings);
-
   const currentThemeName: string | undefined = userSettings.get('workbench.colorTheme');
 
+  _addCurrentTheme(themeList, currentThemeName);
+}
+
+function _addCurrentTheme(themeList: string[], currentThemeName: string | string[] | undefined) {
   if (typeof currentThemeName !== 'undefined') {
-    saveThemes(themeList.concat(currentThemeName).sort(), Messages.AddedTheme(currentThemeName));
+    let keys = typeof currentThemeName === typeof Array ?
+      (<string[]>currentThemeName).join('\n') :
+      <string>currentThemeName;
+    const resultingList = [...new Set(themeList.concat(currentThemeName).sort())];
+    saveThemes(resultingList, Messages.AddedTheme(keys));
   }
 }
 
@@ -163,10 +176,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const userSettings = getUserSettings();
         const currentTheme = userSettings.get('workbench.colorTheme', '');
-        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
 
+        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
         context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, oneMoreTimeThemeList.findIndex(mat => mat === currentTheme) !== -1);
         themeList = await getThemeList(getExtensionConfig(), getUserSettings());
+
+        if (!themeList.includes(currentTheme)) {
+          const wholePack = `Add the whole pack`;
+          vscode.window.showInformationMessage(`Theme set to "${currentTheme}",\nwould you like to add it to the randomThemeList ?`, `Yes`, wholePack, `No`).then(async (res) => {
+            switch (res) {
+              case "Yes":
+                _addCurrentTheme(themeList, currentTheme);
+                break;
+              case wholePack:
+                const pack = await getInstalledThemes(currentTheme);
+                _addCurrentTheme(themeList, pack);
+                break;
+            }
+            themeList = await getThemeList(getExtensionConfig(), getUserSettings());
+          });
+        }
       }
     })
   );
