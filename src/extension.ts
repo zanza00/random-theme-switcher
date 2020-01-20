@@ -18,6 +18,8 @@ async function changeTheme(
   isSwitching = true;
 
   const userSettings = getUserSettings();
+  const currentTheme = userSettings.get('workbench.colorTheme', '');
+  const themeList = _themeList.filter(theme => theme !== currentTheme);
   const i = getRandomInt(themeList.length - 1);
   const newTheme = themeList[i];
   const preventReloadThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
@@ -40,13 +42,13 @@ async function changeTheme(
 async function getInstalledThemes(targetTheme: string | undefined = undefined): Promise<string[]> {
 
   const promise = new Promise<string[]>((r, c) => {
-    vscode.window.showQuickPick([ThemeTypes.Both.key, ThemeTypes.Ligth.key, ThemeTypes.Dark.key], { placeHolder: "Choose your side, May the code be with you !" }).then(async (choosedSide) => {
-      if (choosedSide === ThemeTypes.Ligth.key) { choosedSide = ThemeTypes.Ligth.value; }
-      else if (choosedSide === ThemeTypes.Dark.key) { choosedSide = ThemeTypes.Dark.value; }
+    vscode.window.showQuickPick([ThemeTypes.Both.label, ThemeTypes.Light.label, ThemeTypes.Dark.label], { placeHolder: "Choose your side, May the code be with you !" }).then(async (chosenSide) => {
+      if (chosenSide === ThemeTypes.Light.label) { chosenSide = ThemeTypes.Light.value; }
+      else if (chosenSide === ThemeTypes.Dark.label) { chosenSide = ThemeTypes.Dark.value; }
 
       const excludeRegexPattern = await vscode.window.showInputBox({ prompt: "Exclude themes that match this RegEx, or just Press `Enter` to ignore and continue" });
       const excludeRegex = excludeRegexPattern ? new RegExp(excludeRegexPattern) : null;
-      if (choosedSide) {
+      if (chosenSide) {
         let result = vscode.extensions.all.reduce(
           (acc, ext) => {
             if (ext && ext.packageJSON && ext.packageJSON.contributes) {
@@ -56,7 +58,7 @@ async function getInstalledThemes(targetTheme: string | undefined = undefined): 
                   if (targetTheme && themes.findIndex(theme => theme.label === targetTheme) === -1) {
                     return acc;
                   }
-                  return acc.concat(themes.filter((theme) => choosedSide === ThemeTypes.Both.key || theme.uiTheme === choosedSide).map((theme) => theme.id || theme.label));
+                  return acc.concat(themes.filter((theme) => chosenSide === ThemeTypes.Both.label || theme.uiTheme === chosenSide).map((theme) => theme.id || theme.label));
                 });
               }
             }
@@ -109,14 +111,12 @@ async function getThemeList(
       r(installedThemes);
     }
 
-    const currentTheme = userSettings.get('workbench.colorTheme', '');
     if (themeList.length === 1) {
       vscode.window.showInformationMessage('Why only one theme ç_ç');
       r(themeList);
     }
 
-    r(themeList.filter(theme => theme !== currentTheme));
-
+    r(themeList);
   });
 }
 
@@ -129,7 +129,7 @@ async function addCurrentTheme(extensionConfig = getExtensionConfig(), userSetti
 
 function _addCurrentTheme(themeList: string[], currentThemeName: string | string[] | undefined) {
   if (typeof currentThemeName !== 'undefined') {
-    let keys = typeof currentThemeName === typeof Array ?
+    const keys = typeof currentThemeName === typeof Array ?
       (<string[]>currentThemeName).join('\n') :
       <string>currentThemeName;
     const resultingList = [...new Set(themeList.concat(currentThemeName).sort())];
@@ -149,7 +149,7 @@ async function removeCurrentTheme(extensionConfig = getExtensionConfig(), userSe
 
 let switchMode: SwitchModes = 'manual';
 let isSwitching = false;
-let themeList: string[] = [];
+let _themeList: string[] = [];
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
@@ -177,31 +177,31 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         const userSettings = getUserSettings();
         const currentTheme = userSettings.get('workbench.colorTheme', '');
 
-        const oneMoreTimeThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
-        context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, oneMoreTimeThemeList.findIndex(mat => mat === currentTheme) !== -1);
-        themeList = await getThemeList(getExtensionConfig(), getUserSettings());
-
-        if (!themeList.includes(currentTheme)) {
-          const wholePack = `Add the whole pack`;
-          vscode.window.showInformationMessage(`Theme set to "${currentTheme}",\nwould you like to add it to the randomThemeList ?`, `Yes`, wholePack, `No`).then(async (res) => {
-            switch (res) {
-              case "Yes":
-                _addCurrentTheme(themeList, currentTheme);
-                break;
-              case wholePack:
-                const pack = await getInstalledThemes(currentTheme);
-                _addCurrentTheme(themeList, pack);
-                break;
-            }
-            themeList = await getThemeList(getExtensionConfig(), getUserSettings());
-          });
-        }
+        const preventReloadThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
+        context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, preventReloadThemeList.findIndex(mat => mat === currentTheme) !== -1);
+        getThemeList(getExtensionConfig(), getUserSettings()).then((themeList) => {
+          if (!themeList.includes(currentTheme)) {
+            const wholePack = `Add the whole pack`;
+            vscode.window.showInformationMessage(`Theme set to "${currentTheme}",\nwould you like to add it to the randomThemeList ?`, `Yes`, wholePack, `No`).then(async (res) => {
+              switch (res) {
+                case "Yes":
+                  _addCurrentTheme(themeList, currentTheme);
+                  break;
+                case wholePack:
+                  const pack = await getInstalledThemes(currentTheme);
+                  _addCurrentTheme(themeList, pack);
+                  break;
+              }
+              themeList = await getThemeList(getExtensionConfig(), getUserSettings());
+            });
+          }
+        });
       }
     })
   );
 
   const isLastThemeMaterial = context.globalState.get(LAST_THEME_NEEDS_TO_PERSIST, false);
-  themeList = await getThemeList(extensionConfig, getUserSettings());
+  _themeList = await getThemeList(extensionConfig, getUserSettings());
   switchMode = extensionConfig.get(SettingsKeys.SwitchMode, 'manual');
 
   if (switchMode !== 'manual' && !isLastThemeMaterial) {
