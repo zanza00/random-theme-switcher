@@ -1,0 +1,19 @@
+name: 'Release Vscode Plugin'
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  publish-extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn
+      - run: yarn package
+      - run: yarn publish -p PUBLISHER_TOKEN
+        env:
+          PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
