@@ -37,7 +37,7 @@ export class Messages {
 
 
 export class ThemeTypes {
-    public static Both = 'both';
-    public static Ligth = 'vs';
-    public static Dark = 'vs-dark';
+    public static Both: { label: string, value: string } = { label: 'Both', value: 'both' };
+    public static Light: { label: string, value: string } = { label: 'Light', value: 'vs' };
+    public static Dark: { label: string, value: string } = { label: 'Dark', value: 'vs-dark' };
 }
