@@ -120,8 +120,8 @@
     }
   },
   "scripts": {
-    "package": "npx vsce package",
-    "publish": "npx vsce publish",
+    "package": "vsce package",
+    "publish": "vsce publish",
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode none",
     "webpack-dev": "webpack --mode none --watch",
@@ -135,6 +135,7 @@
     "ts-loader": "^5.3.3",
     "tslint": "^5.12.1",
     "typescript": "^3.3.1",
+    "vsce": "^1.71.0",
     "vscode": "^1.1.33",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
