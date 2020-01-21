@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npx vsce publish -p PUBLISHER_TOKEN
+      - name: publish on vscode marketplace
         env:
           PUBLISHER_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
+        run: npx vsce publish -p $PUBLISHER_TOKEN
