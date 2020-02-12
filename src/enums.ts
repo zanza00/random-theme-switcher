@@ -1,4 +1,5 @@
 export const EXTENSION_NAME = 'randomThemeSwitcher';
+export const EXTENSION_CONTEXT = 'randomThemeSwitcherIsEnabled';
 export const LAST_THEME_NEEDS_TO_PERSIST = 'last-theme-needs-to-persist';
 export const LAST_SWITCH_DAY = 'lastSwitchDay';
 export const MATERIAL_LIST = [
