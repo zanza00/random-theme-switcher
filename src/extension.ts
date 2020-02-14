@@ -9,6 +9,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const cfg: IConfiguration = new ConfigurationManager();
   const themeManager: ThemeManager = new ThemeManager(cfg);
 
+  const vscodeExtensions: any = vscode.extensions;
   context.subscriptions.push(
     vscode.commands.registerCommand(CommandsIds.Switch, () => {
       themeManager.changeTheme();
@@ -24,10 +25,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand(CommandsIds.Remove, () => {
       themeManager.removeCurrentTheme();
     }),
-
     // it listen for theme manual switches, then updates the LAST_THEME_MATERIAL setting.
     vscode.workspace.onDidChangeConfiguration(async (e) => {
-      cfg.reload();
+      themeManager.reloadThemeList();
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const currentTheme = cfg.getCurrentTheme();
 
@@ -52,6 +52,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           }
         });
       }
+    }),
+    vscodeExtensions.onDidChange(() => {
+      themeManager.reloadThemeList(true);
+    }),
+    themeManager.onDidJunkDetected((junkListReport) => {
+      let message;
+      if (junkListReport.uninstalledExtensionTrigger) {
+        message = 'Theme uninstalled, do you want to remove it from the randomThemeList too ?';
+      }
+      else {
+        message = 'The randomThemeList contains junk.. do you want to remove them automatically ?';
+      }
+      vscode.window.showWarningMessage(message, 'yes', 'no');
     })
   );
 

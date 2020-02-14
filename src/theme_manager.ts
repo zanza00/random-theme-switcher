@@ -5,6 +5,10 @@ import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { IConfiguration } from './i_configuration';
 
 export class ThemeManager {
+
+  private _onDidJunkDetected: vscode.EventEmitter<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }> = new vscode.EventEmitter<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }>();
+  readonly onDidJunkDetected: vscode.Event<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }> = this._onDidJunkDetected.event;
+
   public switchMode: SwitchModes = 'manual';
   public isSwitching = false;
   public _themeList: string[] = [];
@@ -66,11 +70,11 @@ export class ThemeManager {
     const currentThemeName: string = this.cfg.getCurrentTheme();
 
     if (typeof currentThemeName !== 'undefined') {
-      this._removeFromThemeList(themeList, currentThemeName);
+      this.removeFromThemeList(themeList, currentThemeName);
     }
   }
 
-  public _removeFromThemeList(themeList: string[], themeName: string) {
+  public removeFromThemeList(themeList: string[], themeName: string) {
     this.saveThemes(themeList.filter(th => th !== themeName), Messages.RemovedTheme(themeName));
   }
 
@@ -102,15 +106,23 @@ export class ThemeManager {
     });
   }
 
-  public async reloadThemeList() {
-    this._themeList = await this.getThemeList();
+  public async reloadThemeList(uninstalledExtensionTrigger: boolean = false) {
+    this.cfg.reload();
+
+    const installedThemes = await this.getInstalledThemes();
+    const fullThemeList = this._themeList = await this.getThemeList();
+    const listContainsJunk = await this.purgeThemeList(installedThemes);
+    if (listContainsJunk) {
+      const junkList = fullThemeList.filter((theme) => !installedThemes.includes(theme));
+      this._onDidJunkDetected.fire({ junkList, uninstalledExtensionTrigger });
+    }
   }
 
-  public async checkThemeListIntegrity(): Promise<boolean> {
-    const installedThemes = await this.getInstalledThemes();
-    const themeList = this._themeList;
-    this._themeList = themeList.filter((theme) => installedThemes.includes(theme));
-    return themeList.length === this._themeList.length;
+  public async purgeThemeList(installedThemes: string[]): Promise<boolean> {
+    const fullThemeList = this._themeList;
+    this._themeList = fullThemeList.filter((theme) => installedThemes.includes(theme));
+    const hasBeenPurged = fullThemeList.length !== this._themeList.length;
+    return hasBeenPurged;
   }
 
   public async getInstalledThemes(): Promise<string[]> {
