@@ -27,6 +27,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     // it listen for theme manual switches, then updates the LAST_THEME_MATERIAL setting.
     vscode.workspace.onDidChangeConfiguration(async (e) => {
+      cfg.reload();
       if (e.affectsConfiguration('workbench.colorTheme')) {
         const currentTheme = cfg.getCurrentTheme();
 

@@ -4,9 +4,7 @@ export interface IConfiguration {
     getLastSwitchDay(): number;
     getSwitchMode(): SwitchModes;
     getPreventReloadList(): string[];
-    reloadExtensionConfig(): void;
-    reloadUserSettings(): void;
-
+    reload(): void;
     getCurrentTheme(): string;
     getThemeList(): string[];
     saveThemes(themes: string[]): Thenable<void>;

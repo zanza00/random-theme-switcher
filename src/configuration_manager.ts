@@ -8,18 +8,13 @@ export class ConfigurationManager implements IConfiguration {
     private userSettings!: vscode.WorkspaceConfiguration;
 
     constructor() {
+        this.reload();
+    }
+
+    public reload(): void {
         this.reloadExtensionConfig();
         this.reloadUserSettings();
     }
-
-    public reloadExtensionConfig(): void {
-        this.extensionConfig = this.getExtensionConfig();
-    }
-
-    public reloadUserSettings(): void {
-        this.userSettings = this.getUserSettings();
-    }
-
 
     public getCurrentTheme(): string {
         return this.userSettings.get('workbench.colorTheme', '');
@@ -63,4 +58,13 @@ export class ConfigurationManager implements IConfiguration {
     private getUserSettings(): vscode.WorkspaceConfiguration {
         return vscode.workspace.getConfiguration();
     }
+
+    private reloadExtensionConfig(): void {
+        this.extensionConfig = this.getExtensionConfig();
+    }
+
+    private reloadUserSettings(): void {
+        this.userSettings = this.getUserSettings();
+    }
+
 }
