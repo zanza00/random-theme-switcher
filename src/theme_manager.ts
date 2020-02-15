@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getRandomInt } from './utils';
-import { Messages, ThemeTypes } from './enums';
+import { Messages, ThemeTypes, CommandsIds } from './enums';
 import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { IConfiguration } from './i_configuration';
 
@@ -59,7 +59,13 @@ export class ThemeManager {
     await this.cfg.setCurrentThemeTo(newTheme);
 
     if (this.switchMode !== 'typing') {
-      vscode.window.showInformationMessage(`Theme switched to ${newTheme}`);
+      const openThemeMemoriesLabel = 'Open Theme Memories';
+      vscode.window.showInformationMessage(`Theme switched to ${newTheme}`, 'Ok', openThemeMemoriesLabel).then((button) => {
+        if (button !== openThemeMemoriesLabel) {
+          return;
+        }
+        vscode.commands.executeCommand(CommandsIds.QuickPickPreviouslySetTheme);
+      });
     }
     this.isSwitching = false;
   }
@@ -166,7 +172,7 @@ export class ThemeManager {
    * Reloads the `themeList` and checks its integrity
    * @param trigger optional source trigger to be passed to the event 
    */
-  public async reloadThemeList(trigger: TriggerKind = 'none') {
+  public async reloadThemeList(trigger: TriggerKind = 'none'): Promise<void> {
     this.cfg.reload();
 
     const installedThemes = await this.getAllInstalledThemes();

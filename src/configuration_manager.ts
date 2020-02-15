@@ -58,8 +58,12 @@ export class ConfigurationManager implements IConfiguration {
         return this.extensionConfig.get<number>(SettingsKeys.SwitchInterval, 3);
     }
 
-    public setLastSwitchDay(value: number) {
+    public setLastSwitchDay(value: number): Thenable<void> {
         return this.extensionConfig.update(LAST_SWITCH_DAY, value, true);
+    }
+
+    public getMaxLastSwitchedThemeCount(): number {
+        return this.extensionConfig.get(SettingsKeys.MaxLastSwitchedThemeCount, 10);
     }
 
     private getExtensionConfig(): vscode.WorkspaceConfiguration {

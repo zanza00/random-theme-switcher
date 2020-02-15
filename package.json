@@ -35,19 +35,28 @@
     "commands": [
       {
         "command": "randomThemeSwitcher.switchTheme",
-        "title": "Random Theme: Switch to a Random Theme"
+        "title": "Switch to a Random Theme",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.copyInstalledThemes",
-        "title": "Random Theme: Copy all installed themes in settings"
+        "title": "Copy all installed themes in settings",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.addCurrentTheme",
-        "title": "Random Theme: Add current theme to settings"
+        "title": "Add current theme to settings",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.removeCurrentTheme",
-        "title": "Random Theme: Remove current theme from settings"
+        "title": "Remove current theme from settings",
+        "category": "Random Theme"
+      },
+      {
+        "command": "randomThemeSwitcher.quickPickPreviouslySetTheme",
+        "title": "Pick a theme from memories",
+        "category": "Random Theme"
       }
     ],
     "keybindings": [
@@ -101,6 +110,13 @@
           "markdownDescription": "Last switch day of the week (used in the [switchMode](#randomThemeSwitcher.switchMode) `daily`)",
           "scope": "application"
         },
+        "randomThemeSwitcher.maxLastSwitchedThemeCount": {
+          "title": "max last switched theme count",
+          "type": "integer",
+          "default": 10,
+          "markdownDescription": "Set the maximum value of swapped themes memory list (used when restoring a previously set theme)",
+          "scope": "application"
+        },
         "randomThemeSwitcher.preventReloadThemeList": {
           "title": "prevent reload theme list",
           "type": "array",
@@ -136,6 +152,10 @@
         },
         {
           "command": "randomThemeSwitcher.removeCurrentTheme",
+          "when": "randomThemeSwitcherIsEnabled"
+        },
+        {
+          "command": "randomThemeSwitcher.quickPickPreviouslySetTheme",
           "when": "randomThemeSwitcherIsEnabled"
         }
       ]

@@ -16,6 +16,7 @@ export interface IConfiguration {
     getSwitchInterval(): number;
     getSwitchMode(): SwitchModes;
     getPreventReloadList(): string[];
+    getMaxLastSwitchedThemeCount(): number;
     getThemeList(): string[];
     saveThemes(themes: string[]): Promise<boolean>;
 }

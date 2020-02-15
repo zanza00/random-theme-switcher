@@ -1,5 +1,6 @@
 export const EXTENSION_NAME = 'randomThemeSwitcher';
 export const EXTENSION_CONTEXT = 'randomThemeSwitcherIsEnabled';
+export const LAST_SWITCHED_THEME_LIST_STORAGE_KEY = 'randomThemeSwitcherLastSwitchedThemeList';
 export const LAST_THEME_NEEDS_TO_PERSIST = 'last-theme-needs-to-persist';
 export const LAST_SWITCH_DAY = 'lastSwitchDay';
 export const MATERIAL_LIST = [
@@ -20,12 +21,14 @@ export class CommandsIds {
     public static CopyAll = 'randomThemeSwitcher.copyInstalledThemes';
     public static Add = 'randomThemeSwitcher.addCurrentTheme';
     public static Remove = 'randomThemeSwitcher.removeCurrentTheme';
+    public static QuickPickPreviouslySetTheme = 'randomThemeSwitcher.quickPickPreviouslySetTheme';
 }
 
 export class SettingsKeys {
     public static SwitchMode = 'switchMode';
     public static SwitchInterval = 'switchInterval';
     public static PreventReloadThemeList = 'preventReloadThemeList';
+    public static MaxLastSwitchedThemeCount = 'maxLastSwitchedThemeCount';
 }
 
 export class Messages {

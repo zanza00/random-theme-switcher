@@ -4,11 +4,13 @@ import { ThemeManager } from './theme_manager';
 import { IConfiguration } from './i_configuration';
 import { ConfigurationManager } from './configuration_manager';
 import { Linter } from './linter';
+import { ThemeMemories } from './theme_memories';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
   const cfg: IConfiguration = new ConfigurationManager();
   const themeManager: ThemeManager = new ThemeManager(cfg);
+  const themeMemories: ThemeMemories = new ThemeMemories(context, cfg);
   const linter: Linter = new Linter(context);
 
   context.subscriptions.push(
@@ -26,14 +28,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand(CommandsIds.Remove, () => {
       themeManager.removeCurrentTheme();
     }),
+    vscode.commands.registerCommand(CommandsIds.QuickPickPreviouslySetTheme, async () => {
+      const themeName = await themeMemories.pickThemeFromMemories();
+      if (themeName) { cfg.setCurrentThemeTo(themeName); }
+    }),
     // it listen for theme manual switches, then updates the LAST_THEME_MATERIAL setting.
     vscode.workspace.onDidChangeConfiguration(async (e) => {
       if (e.affectsConfiguration('randomThemeSwitcher.themeList')) {
         themeManager.reloadThemeList();
       }
-      if (e.affectsConfiguration('workbench.colorTheme')) {
+      if (e.affectsConfiguration('workbench.colorTheme') && !themeMemories.isQuickPickOpen) {
         const currentTheme = cfg.getCurrentTheme();
-
+        themeMemories.add(currentTheme);
         const preventReloadThemeList: string[] = cfg.getPreventReloadList();
         context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, preventReloadThemeList.findIndex(mat => mat === currentTheme) !== -1);
 
@@ -63,7 +69,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   );
 
   const isLastThemeMaterial = context.globalState.get(LAST_THEME_NEEDS_TO_PERSIST, false);
-  themeManager.reloadThemeList();
+  await themeManager.reloadThemeList();
   themeManager.switchMode = cfg.getSwitchMode();
 
   if (themeManager.switchMode !== 'manual') {
