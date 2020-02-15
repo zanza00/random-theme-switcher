@@ -2,8 +2,10 @@ import { IConfiguration } from "./i_configuration";
 import { EXTENSION_NAME, SettingsKeys, MATERIAL_LIST, LAST_SWITCH_DAY } from './enums';
 import * as vscode from 'vscode';
 
+/**
+ * It centralizes the configuration access.
+ */
 export class ConfigurationManager implements IConfiguration {
-
     private extensionConfig!: vscode.WorkspaceConfiguration;
     private userSettings!: vscode.WorkspaceConfiguration;
 
@@ -35,7 +37,6 @@ export class ConfigurationManager implements IConfiguration {
         return this.userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
     }
 
-
     public getSwitchMode(): SwitchModes {
         return this.extensionConfig.get(SettingsKeys.SwitchMode, 'manual');
     }
@@ -63,7 +64,7 @@ export class ConfigurationManager implements IConfiguration {
         this.extensionConfig = this.getExtensionConfig();
     }
 
-    private reloadUserSettings(): void {
+    public reloadUserSettings(): void {
         this.userSettings = this.getUserSettings();
     }
 

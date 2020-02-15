@@ -30,10 +30,15 @@ export class SettingsKeys {
 
 export class Messages {
     public static CopiedTheme = (number: number) => `Copied ${number} themes to settings`;
-
     public static AddedTheme = (theme: string) => `Added ${theme} to Random Theme List in settings`;
-
     public static RemovedTheme = (theme: string) => `Removed ${theme} from Random Theme List in settings`;
+    public static JunkDetected = (junkCount: number) => junkCount > 1 ?
+        `The randomThemeList contains invalid theme names: do you want to fix them automatically ?` :
+        `The randomThemeList contains an invalid theme name: do you want to fix it automatically ?`
+    public static JunkDetectedAfterUninstallationOrDeactivation = (junkCount: number) => junkCount > 1 ?
+        `Themes uninstalled/deactivated, do you want to remove them automatically from the randomThemeList too ?` :
+        `Theme uninstalled/deactivated, do you want to remove it from the randomThemeList too ?`
+    public static NotAValidTheme: string = "This is not a valid theme name.";
 }
 
 

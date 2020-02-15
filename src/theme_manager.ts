@@ -6,12 +6,30 @@ import { IConfiguration } from './i_configuration';
 
 export class ThemeManager {
 
-  private _onDidJunkDetected: vscode.EventEmitter<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }> = new vscode.EventEmitter<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }>();
-  readonly onDidJunkDetected: vscode.Event<{ junkList: string[] | undefined, uninstalledExtensionTrigger: boolean }> = this._onDidJunkDetected.event;
+  /**
+   * Flammable EventEmitter
+   */
+  private _onDidJunkDetected: vscode.EventEmitter<{ junkList: string[], trigger: TriggerKind }> = new vscode.EventEmitter<{ junkList: string[], trigger: TriggerKind }>();
 
+  /**
+   * Event raised when themeManager detects junk while reloading the themeList
+   */
+  readonly onDidJunkDetected: vscode.Event<{ junkList: string[], trigger: TriggerKind }> = this._onDidJunkDetected.event;
+
+  /**
+   * Get or Set the switch mode.
+   */
   public switchMode: SwitchModes = 'manual';
+
+  /**
+   * Indicates whether theme swap is in progress.
+   */
   public isSwitching = false;
-  public _themeList: string[] = [];
+
+  /**
+   * Internal themeList
+   */
+  private _themeList: string[] = [];
 
   /**
    *  The ThemeManager will swap themes when needed
@@ -20,6 +38,10 @@ export class ThemeManager {
 
   }
 
+  /**
+   * Swap the current color by choosing one at random from the themeList
+   * @param context the optional extension context
+   */
   public async changeTheme(
     context?: vscode.ExtensionContext): Promise<void> {
     this.isSwitching = true;
@@ -42,7 +64,9 @@ export class ThemeManager {
     this.isSwitching = false;
   }
 
-
+  /**
+   * Adds the current theme to themeList
+   */
   public async addCurrentTheme(): Promise<void> {
     const themeList = await this.getThemeList();
     const currentThemeName: string = this.cfg.getCurrentTheme();
@@ -65,6 +89,9 @@ export class ThemeManager {
     }
   }
 
+  /**
+   * Removes the current colorTheme from the themeList
+   */
   public async removeCurrentTheme(): Promise<void> {
     const themeList = await this.getThemeList();
     const currentThemeName: string = this.cfg.getCurrentTheme();
@@ -74,11 +101,31 @@ export class ThemeManager {
     }
   }
 
+  /**
+   * It removes the `themeName` from the specified `themeList`
+   * @param themeList the theme list
+   * @param themeName the theme to remove
+   */
   public removeFromThemeList(themeList: string[], themeName: string) {
     this.saveThemes(themeList.filter(th => th !== themeName), Messages.RemovedTheme(themeName));
   }
 
 
+  /**
+   * Stores the current themeList
+   * @param message the output message
+   */
+  public async saveCurrentThemeList(
+    message: string,
+  ): Promise<void> {
+    await this.saveThemes(this._themeList, message);
+  }
+
+  /**
+   * Stores the `themes` list
+   * @param themes the themeList
+   * @param message the output message
+   */
   public async saveThemes(
     themes: string[],
     message: string,
@@ -87,6 +134,9 @@ export class ThemeManager {
     vscode.window.showInformationMessage(message);
   }
 
+  /**
+   * Provides stored `themeList`
+   */
   public async getThemeList(): Promise<string[]> {
     return new Promise(async (r, _) => {
       const themeList: string[] = this.cfg.getThemeList();
@@ -106,18 +156,30 @@ export class ThemeManager {
     });
   }
 
-  public async reloadThemeList(uninstalledExtensionTrigger: boolean = false) {
+  /**
+   * Reloads the `themeList` and checks its integrity
+   * @param trigger optional source trigger to be passed to the event 
+   */
+  public async reloadThemeList(trigger: TriggerKind = 'none') {
     this.cfg.reload();
 
-    const installedThemes = await this.getInstalledThemes();
+    const installedThemes = await this.getAllInstalledThemes();
+    // Firstly keep an exact copy of the stored themeList
     const fullThemeList = this._themeList = await this.getThemeList();
+
     const listContainsJunk = await this.purgeThemeList(installedThemes);
     if (listContainsJunk) {
+      // If stored list contains junk, raise the event
       const junkList = fullThemeList.filter((theme) => !installedThemes.includes(theme));
-      this._onDidJunkDetected.fire({ junkList, uninstalledExtensionTrigger });
+
+      this._onDidJunkDetected.fire({ junkList, trigger });
     }
   }
 
+  /**
+   * Detects whether the `_themeList` contains only valid themes, otherwise purges it from invalid entries
+   * @param installedThemes list of valid theme names
+   */
   public async purgeThemeList(installedThemes: string[]): Promise<boolean> {
     const fullThemeList = this._themeList;
     this._themeList = fullThemeList.filter((theme) => installedThemes.includes(theme));
@@ -125,7 +187,10 @@ export class ThemeManager {
     return hasBeenPurged;
   }
 
-  public async getInstalledThemes(): Promise<string[]> {
+  /**
+   * Provides all the VS Code installed themes 
+   */
+  public async getAllInstalledThemes(): Promise<string[]> {
     const promise = new Promise<string[]>((r) => {
       let result = vscode.extensions.all.reduce(
         (acc, ext) => {
@@ -146,6 +211,11 @@ export class ThemeManager {
     return promise;
   }
 
+  /**
+   * Prompts the user about the theme sides and for an exclusion regex, in order to add themes from installed ones to `themeList` 
+   * @param targetTheme When choosing `Add the whole pack`, indicates the theme that must be contained into theme pack, in order to accept its members 
+   * @returns the matching themes
+   */
   public async pickFromInstalledThemes(targetTheme: string | undefined = undefined): Promise<string[]> {
 
     const promise = new Promise<string[]>((r, c) => {

@@ -3,13 +3,14 @@ import { LAST_THEME_NEEDS_TO_PERSIST, Messages, CommandsIds, EXTENSION_CONTEXT }
 import { ThemeManager } from './theme_manager';
 import { IConfiguration } from './i_configuration';
 import { ConfigurationManager } from './configuration_manager';
+import { Linter } from './linter';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
   const cfg: IConfiguration = new ConfigurationManager();
   const themeManager: ThemeManager = new ThemeManager(cfg);
+  const linter: Linter = new Linter(context);
 
-  const vscodeExtensions: any = vscode.extensions;
   context.subscriptions.push(
     vscode.commands.registerCommand(CommandsIds.Switch, () => {
       themeManager.changeTheme();
@@ -27,8 +28,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     // it listen for theme manual switches, then updates the LAST_THEME_MATERIAL setting.
     vscode.workspace.onDidChangeConfiguration(async (e) => {
-      themeManager.reloadThemeList();
+      if (e.affectsConfiguration('randomThemeSwitcher.themeList')) {
+        themeManager.reloadThemeList();
+      }
       if (e.affectsConfiguration('workbench.colorTheme')) {
+        cfg.reloadUserSettings();
         const currentTheme = cfg.getCurrentTheme();
 
         const preventReloadThemeList: string[] = <string[]>cfg.getPreventReloadList();
@@ -53,18 +57,24 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         });
       }
     }),
-    vscodeExtensions.onDidChange(() => {
-      themeManager.reloadThemeList(true);
+    // Strange: onDidChange is hidden, but reachable 
+    (<any>vscode.extensions).onDidChange(() => {
+      linter.deactivate();
+      themeManager.reloadThemeList("extensionsGotDeactivatedOrUninstalled");
     }),
-    themeManager.onDidJunkDetected((junkListReport) => {
-      let message;
-      if (junkListReport.uninstalledExtensionTrigger) {
-        message = 'Theme uninstalled, do you want to remove it from the randomThemeList too ?';
+    themeManager.onDidJunkDetected(async (junkListReport) => {
+
+      linter.activate(junkListReport.junkList);
+
+      const junkCount = junkListReport.junkList.length;
+      let message = junkListReport.trigger === "extensionsGotDeactivatedOrUninstalled" ?
+        Messages.JunkDetectedAfterUninstallationOrDeactivation(junkCount) :
+        Messages.JunkDetected(junkCount);
+      const answer = await vscode.window.showWarningMessage(message, 'Yes', 'No');
+      if (answer === 'Yes') {
+        linter.deactivate();
+        themeManager.saveCurrentThemeList(Messages.RemovedTheme(junkCount + ' theme' + (junkCount > 1 ? 's' : '')));
       }
-      else {
-        message = 'The randomThemeList contains junk.. do you want to remove them automatically ?';
-      }
-      vscode.window.showWarningMessage(message, 'yes', 'no');
     })
   );
 
