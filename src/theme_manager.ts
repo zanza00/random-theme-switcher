@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getRandomInt } from './utils';
-import { LAST_THEME_NEEDS_TO_PERSIST, Messages, ThemeTypes } from './enums';
+import { Messages, ThemeTypes } from './enums';
 import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { IConfiguration } from './i_configuration';
 
@@ -42,19 +42,13 @@ export class ThemeManager {
    * Swap the current color by choosing one at random from the themeList
    * @param context the optional extension context
    */
-  public async changeTheme(
-    context?: vscode.ExtensionContext): Promise<void> {
+  public async changeTheme(): Promise<void> {
     this.isSwitching = true;
 
     const currentTheme = this.cfg.getCurrentTheme();
     const themeList = this._themeList.filter(theme => theme !== currentTheme);
     const i = getRandomInt(themeList.length - 1);
     const newTheme = themeList[i];
-    const preventReloadThemeList: string[] = <string[]>this.cfg.getPreventReloadList();
-
-    if (preventReloadThemeList.findIndex(mat => mat === newTheme) && context !== undefined) {
-      await context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, true);
-    }
 
     await this.cfg.setCurrentThemeTo(newTheme);
 
@@ -68,10 +62,9 @@ export class ThemeManager {
    * Adds the current theme to themeList
    */
   public async addCurrentTheme(): Promise<void> {
-    const themeList = await this.getThemeList();
+    //const themeList = await this.getThemeList();
     const currentThemeName: string = this.cfg.getCurrentTheme();
-
-    this.addToThemeList(themeList, currentThemeName);
+    this._themeList = await this.addToThemeList(this._themeList, currentThemeName);
   }
 
   /**
@@ -80,24 +73,26 @@ export class ThemeManager {
    * @param what a theme or a list of themes
    */
   public addToThemeList(themeList: string[], what: string | string[] | undefined) {
-    if (typeof what !== 'undefined') {
-      const keys = typeof what === typeof Array ?
-        (<string[]>what).join('\n') :
-        <string>what;
-      const resultingList = [...new Set(themeList.concat(what).sort())];
-      this.saveThemes(resultingList, Messages.AddedTheme(keys));
-    }
+    return new Promise<string[]>(async (r, c) => {
+      if (typeof what !== 'undefined') {
+        const keys = typeof what === typeof Array ?
+          (<string[]>what).join('\n') :
+          <string>what;
+        let resultingList = [...new Set(themeList.concat(what).sort())];
+        const result = await this.saveThemes(resultingList, Messages.AddedTheme(keys));
+        if (!result) { resultingList = await this.cfg.getThemeList(); }
+        r(resultingList);
+      }
+    });
   }
 
   /**
    * Removes the current colorTheme from the themeList
    */
   public async removeCurrentTheme(): Promise<void> {
-    const themeList = await this.getThemeList();
     const currentThemeName: string = this.cfg.getCurrentTheme();
-
     if (typeof currentThemeName !== 'undefined') {
-      this.removeFromThemeList(themeList, currentThemeName);
+      this._themeList = await this.removeFromThemeList(this._themeList, currentThemeName);
     }
   }
 
@@ -106,8 +101,12 @@ export class ThemeManager {
    * @param themeList the theme list
    * @param themeName the theme to remove
    */
-  public removeFromThemeList(themeList: string[], themeName: string) {
-    this.saveThemes(themeList.filter(th => th !== themeName), Messages.RemovedTheme(themeName));
+  public async removeFromThemeList(themeList: string[], themeName: string) {
+    const newThemeList = themeList.filter(th => th !== themeName);
+    if (await this.saveThemes(themeList, Messages.RemovedTheme(themeName))) {
+      themeList = newThemeList;
+    }
+    return themeList;
   }
 
 
@@ -129,9 +128,10 @@ export class ThemeManager {
   public async saveThemes(
     themes: string[],
     message: string,
-  ): Promise<void> {
-    await this.cfg.saveThemes(themes);
-    vscode.window.showInformationMessage(message);
+  ): Promise<boolean> {
+    const result = await this.cfg.saveThemes(themes);
+    if (result) { vscode.window.showInformationMessage(message); }
+    return result;
   }
 
   /**
@@ -210,6 +210,29 @@ export class ThemeManager {
     });
     return promise;
   }
+
+
+  /**
+   * Checks if the theme is not in the `themeList` 
+   * @param targetTheme the theme to check
+   */
+  public checkIfThemeIsInList(targetTheme: string) {
+    if (!this._themeList.includes(targetTheme)) {
+      const wholePack = `Add the whole pack`;
+      vscode.window.showInformationMessage(`Theme set to "${targetTheme}",\nwould you like to add it to the randomThemeList ?`, `Yes`, wholePack, `No`).then(async (res) => {
+        switch (res) {
+          case "Yes":
+            this._themeList = await this.addToThemeList(this._themeList, targetTheme);
+            break;
+          case wholePack:
+            const pack = await this.pickFromInstalledThemes(targetTheme);
+            this._themeList = await this.addToThemeList(this._themeList, pack);
+            break;
+        }
+      });
+    }
+  }
+
 
   /**
    * Prompts the user about the theme sides and for an exclusion regex, in order to add themes from installed ones to `themeList` 

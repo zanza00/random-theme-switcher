@@ -19,14 +19,24 @@ export class ConfigurationManager implements IConfiguration {
     }
 
     public getCurrentTheme(): string {
+        this.reloadUserSettings();
         return this.userSettings.get('workbench.colorTheme', '');
     }
     public setCurrentThemeTo(newTheme: string): Thenable<void> {
+        this.reloadUserSettings();
         return this.userSettings.update('workbench.colorTheme', newTheme, true);
     }
 
-    public saveThemes(themes: string[]): Thenable<void> {
-        return this.userSettings.update('randomThemeSwitcher.themeList', themes, true);
+    public saveThemes(themes: string[]): Promise<boolean> {
+        return new Promise((r, c) => {
+            try {
+                this.userSettings.update('randomThemeSwitcher.themeList', themes, true);
+                r(true);
+            } catch (err) {
+                vscode.window.showErrorMessage('An error has occurred while saving the themeList: ' + err);
+                r(false);
+            }
+        });
     }
 
     public getThemeList(): string[] {

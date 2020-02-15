@@ -32,42 +32,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         themeManager.reloadThemeList();
       }
       if (e.affectsConfiguration('workbench.colorTheme')) {
-        cfg.reloadUserSettings();
         const currentTheme = cfg.getCurrentTheme();
 
-        const preventReloadThemeList: string[] = <string[]>cfg.getPreventReloadList();
+        const preventReloadThemeList: string[] = cfg.getPreventReloadList();
         context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, preventReloadThemeList.findIndex(mat => mat === currentTheme) !== -1);
 
-        themeManager.getThemeList().then((themeList) => {
-          if (!themeList.includes(currentTheme)) {
-            const wholePack = `Add the whole pack`;
-            vscode.window.showInformationMessage(`Theme set to "${currentTheme}",\nwould you like to add it to the randomThemeList ?`, `Yes`, wholePack, `No`).then(async (res) => {
-              switch (res) {
-                case "Yes":
-                  themeManager.addToThemeList(themeList, currentTheme);
-                  break;
-                case wholePack:
-                  const pack = await themeManager.pickFromInstalledThemes(currentTheme);
-                  themeManager.addToThemeList(themeList, pack);
-                  break;
-              }
-              themeList = await themeManager.getThemeList();
-            });
-          }
-        });
+        themeManager.checkIfThemeIsInList(currentTheme);
       }
     }),
+
     // Strange: onDidChange is hidden, but reachable 
     (<any>vscode.extensions).onDidChange(() => {
       linter.deactivate();
       themeManager.reloadThemeList("extensionsGotDeactivatedOrUninstalled");
     }),
-    themeManager.onDidJunkDetected(async (junkListReport) => {
 
-      linter.activate(junkListReport.junkList);
+    themeManager.onDidJunkDetected(async (e) => {
 
-      const junkCount = junkListReport.junkList.length;
-      let message = junkListReport.trigger === "extensionsGotDeactivatedOrUninstalled" ?
+      linter.activate(e.junkList);
+      const junkCount = e.junkList.length;
+      const message = e.trigger === "extensionsGotDeactivatedOrUninstalled" ?
         Messages.JunkDetectedAfterUninstallationOrDeactivation(junkCount) :
         Messages.JunkDetected(junkCount);
       const answer = await vscode.window.showWarningMessage(message, 'Yes', 'No');
@@ -87,7 +71,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     let today = new Date().getDay();
 
     if (themeManager.switchMode !== 'daily' || today !== lastSwitchDay) {
-      await themeManager.changeTheme(context);
+      await themeManager.changeTheme();
     }
 
     if (themeManager.switchMode === 'daily' && today !== lastSwitchDay) {
@@ -96,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     if (themeManager.switchMode === 'interval') {
       const switchInterval = cfg.getSwitchInterval();
-      setInterval(() => themeManager.changeTheme(context), switchInterval * 60000);
+      setInterval(() => themeManager.changeTheme(), switchInterval * 60000);
     }
     else if (themeManager.switchMode === 'typing') {
       vscode.workspace.onDidChangeTextDocument(event => {

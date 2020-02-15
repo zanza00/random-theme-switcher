@@ -17,5 +17,5 @@ export interface IConfiguration {
     getSwitchMode(): SwitchModes;
     getPreventReloadList(): string[];
     getThemeList(): string[];
-    saveThemes(themes: string[]): Thenable<void>;
+    saveThemes(themes: string[]): Promise<boolean>;
 }
