@@ -43,12 +43,18 @@ export class ThemeManager {
    * @param context the optional extension context
    */
   public async changeTheme(): Promise<void> {
+    const currentTheme = this.cfg.getCurrentTheme();
+    const len = this._themeList.length - 1;
+    if (len <= 1) { return; }
+
     this.isSwitching = true;
 
-    const currentTheme = this.cfg.getCurrentTheme();
-    const themeList = this._themeList.filter(theme => theme !== currentTheme);
-    const i = getRandomInt(themeList.length - 1);
-    const newTheme = themeList[i];
+    let i = 0;
+    do {
+      i = getRandomInt(len);
+    } while (this._themeList[i] === currentTheme);
+
+    const newTheme = this._themeList[i];
 
     await this.cfg.setCurrentThemeTo(newTheme);
 

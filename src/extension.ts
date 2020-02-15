@@ -66,11 +66,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   themeManager.reloadThemeList();
   themeManager.switchMode = cfg.getSwitchMode();
 
-  if (themeManager.switchMode !== 'manual' && !isLastThemeMaterial) {
+  if (themeManager.switchMode !== 'manual') {
     let lastSwitchDay = cfg.getLastSwitchDay();
     let today = new Date().getDay();
 
-    if (themeManager.switchMode !== 'daily' || today !== lastSwitchDay) {
+    if ((themeManager.switchMode !== 'daily' || today !== lastSwitchDay) && !isLastThemeMaterial) {
       await themeManager.changeTheme();
     }
 

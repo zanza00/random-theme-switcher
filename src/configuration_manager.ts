@@ -23,7 +23,7 @@ export class ConfigurationManager implements IConfiguration {
         return this.userSettings.get('workbench.colorTheme', '');
     }
     public setCurrentThemeTo(newTheme: string): Thenable<void> {
-        this.reloadUserSettings();
+        // this.reloadUserSettings();
         return this.userSettings.update('workbench.colorTheme', newTheme, true);
     }
 
