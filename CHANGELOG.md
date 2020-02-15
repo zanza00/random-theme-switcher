@@ -2,9 +2,24 @@
 
 ## Release Notes
 
+## 0.3.0
+
+* Added the `ThemeMemories` feature
+	* Added [Random Theme: Pick a theme from memories](#randomThemeSwitcher.quickPickPreviouslySetTheme) command
+	* Added [max last switched theme count](#randomThemeSwitcher.maxLastSwitchedThemeCount) setting 
+* BugFix: in "startup" mode if list is big it's not always possible to swap
+* BugFix on startup if `isLastThemeMaterial` is *true* other modes stopped working 
+* Improved the performance of the `changeTheme` method
+* Added the Linter Now the extension will detects junk in `themeList` or extension deactivations/unInstallations and ask user for fixing automatically the junk entries.
+* Improved the package.json
+	* Fixed Typos
+	* Fixed Scopes
+	* Added commandPalette section
+	* Categorized commands
+
 ## 0.2.2
 
-- Fixes `switchMode` "daily" behaviour.
+- Fixes `switchMode` "daily" behavior.
 - When choosing a new theme, it will prompt if you want to add it to the random theme list.
 
 ## 0.2.1
@@ -16,13 +31,13 @@
 
 - Improved the code
 - Introduced the `randomThemeSwitcher.switchMode` setting
-- Improved the `randomThemeSwitcher.copyall` command:
+- Improved the `randomThemeSwitcher.copyAll` command:
   - Now you can narrow the themes' side you want to load
   - You can now optionally specify an exclude regex for theme names 
 
 ## 0.1.3
 
-- Added key chord for changing theme `cmd+k cmd+shift+t`
+- Added key chord for changing theme <kbd>cmd+k cmd+shift+t</kbd>
 - Added command to add and remove current theme from lists
 
 ## 0.1.2
