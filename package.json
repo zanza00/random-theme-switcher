@@ -55,7 +55,7 @@
       },
       {
         "command": "randomThemeSwitcher.quickPickPreviouslySetTheme",
-        "title": "Pick a theme from memories",
+        "title": "Pick a theme from the recent ones",
         "category": "Random Theme"
       }
     ],
@@ -110,11 +110,11 @@
           "markdownDescription": "Last switch day of the week (used in the [switchMode](#randomThemeSwitcher.switchMode) `daily`)",
           "scope": "application"
         },
-        "randomThemeSwitcher.maxLastSwitchedThemeCount": {
-          "title": "max last switched theme count",
+        "randomThemeSwitcher.maxRecentThemeCount": {
+          "title": "max recent themes count",
           "type": "integer",
           "default": 10,
-          "markdownDescription": "Set the maximum value of swapped themes memory list (used when restoring a previously set theme)",
+          "markdownDescription": "Set the maximum value of recent themes list (used when restoring a previously set theme)",
           "scope": "application"
         },
         "randomThemeSwitcher.preventReloadThemeList": {

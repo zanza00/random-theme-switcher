@@ -59,9 +59,9 @@ export class ThemeManager {
     await this.cfg.setCurrentThemeTo(newTheme);
 
     if (this.switchMode !== 'typing') {
-      const openThemeMemoriesLabel = 'Open Theme Memories';
-      vscode.window.showInformationMessage(`Theme switched to ${newTheme}`, 'Ok', openThemeMemoriesLabel).then((button) => {
-        if (button !== openThemeMemoriesLabel) {
+      const openRecentThemesLabel = 'Open Recent Themes';
+      vscode.window.showInformationMessage(`Theme switched to ${newTheme}`, 'Ok', openRecentThemesLabel).then((button) => {
+        if (button !== openRecentThemesLabel) {
           return;
         }
         vscode.commands.executeCommand(CommandsIds.QuickPickPreviouslySetTheme);

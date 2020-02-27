@@ -63,7 +63,7 @@ export class ConfigurationManager implements IConfiguration {
     }
 
     public getMaxLastSwitchedThemeCount(): number {
-        return this.extensionConfig.get(SettingsKeys.MaxLastSwitchedThemeCount, 10);
+        return this.extensionConfig.get(SettingsKeys.MaxRecentThemeCount, 10);
     }
 
     private getExtensionConfig(): vscode.WorkspaceConfiguration {

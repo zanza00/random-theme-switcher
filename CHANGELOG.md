@@ -4,8 +4,8 @@
 
 ## 0.3.0
 
-* Added the `ThemeMemories` feature
-	* Added [Random Theme: Pick a theme from memories](#randomThemeSwitcher.quickPickPreviouslySetTheme) command
+* Added the `Recent themes` feature
+	* Added [Random Theme: Pick a theme from the recent ones](#randomThemeSwitcher.quickPickPreviouslySetTheme) command
 	* Added [max last switched theme count](#randomThemeSwitcher.maxLastSwitchedThemeCount) setting 
 * BugFix: in "startup" mode if list is big it's not always possible to swap
 * BugFix on startup if `isLastThemeMaterial` is *true* other modes stopped working 

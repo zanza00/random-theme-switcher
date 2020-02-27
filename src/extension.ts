@@ -4,13 +4,13 @@ import { ThemeManager } from './theme_manager';
 import { IConfiguration } from './i_configuration';
 import { ConfigurationManager } from './configuration_manager';
 import { Linter } from './linter';
-import { ThemeMemories } from './theme_memories';
+import { RecentThemes } from './recent_themes';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
   const cfg: IConfiguration = new ConfigurationManager();
   const themeManager: ThemeManager = new ThemeManager(cfg);
-  const themeMemories: ThemeMemories = new ThemeMemories(context, cfg);
+  const recentThemes: RecentThemes = new RecentThemes(context, cfg);
   const linter: Linter = new Linter(context);
 
   context.subscriptions.push(
@@ -29,7 +29,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       themeManager.removeCurrentTheme();
     }),
     vscode.commands.registerCommand(CommandsIds.QuickPickPreviouslySetTheme, async () => {
-      const themeName = await themeMemories.pickThemeFromMemories();
+      const themeName = await recentThemes.pickThemeFromRecentThemes();
       if (themeName) { cfg.setCurrentThemeTo(themeName); }
     }),
     // it listen for theme manual switches, then updates the LAST_THEME_MATERIAL setting.
@@ -37,9 +37,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (e.affectsConfiguration('randomThemeSwitcher.themeList')) {
         themeManager.reloadThemeList();
       }
-      if (e.affectsConfiguration('workbench.colorTheme') && !themeMemories.isQuickPickOpen) {
+      if (e.affectsConfiguration('workbench.colorTheme') && !recentThemes.isQuickPickOpen) {
         const currentTheme = cfg.getCurrentTheme();
-        themeMemories.add(currentTheme);
+        recentThemes.add(currentTheme);
         const preventReloadThemeList: string[] = cfg.getPreventReloadList();
         context.globalState.update(LAST_THEME_NEEDS_TO_PERSIST, preventReloadThemeList.findIndex(mat => mat === currentTheme) !== -1);
 
@@ -63,7 +63,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const answer = await vscode.window.showWarningMessage(message, 'Yes', 'No');
       if (answer === 'Yes') {
         linter.deactivate();
-        themeManager.saveCurrentThemeList(Messages.RemovedTheme(junkCount + ' theme' + (junkCount > 1 ? 's' : '')));
+        themeManager.saveCurrentThemeList(Messages.RemovedTheme(junkCount + ' theme' + (junkCount > 1 ? 's' : ''), `: (${e.junkList.join(", ")})`));
       }
     })
   );

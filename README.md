@@ -35,7 +35,7 @@ A simple extension that chooses and applies a *random* theme.
 
 * You can also interact with the [theme list](#randomThemeSwitcher.themeList) without open the `settings.json`:
   * Use [Random Theme: Add current theme to settings](#randomThemeSwitcher.addCurrentTheme) and [Random Theme: Remove current theme from settings](#randomThemeSwitcher.removeCurrentTheme) to dynamically add or remove themes from the list
-* If you feel nostalgic or simply want to swap to that awesome theme again, use [Random Theme: Pick a theme from memories](#randomThemeSwitcher.quickPickPreviouslySetTheme) command
+* If you feel nostalgic or simply want to swap to that awesome theme again, use [Random Theme: Pick a theme from the recent ones](#randomThemeSwitcher.quickPickPreviouslySetTheme) command
   * Remember to increase the limit if you feel right to do so tweaking the [max last switched theme count](#randomThemeSwitcher.maxLastSwitchedThemeCount) setting
 
 

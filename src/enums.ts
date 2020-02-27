@@ -28,13 +28,13 @@ export class SettingsKeys {
     public static SwitchMode = 'switchMode';
     public static SwitchInterval = 'switchInterval';
     public static PreventReloadThemeList = 'preventReloadThemeList';
-    public static MaxLastSwitchedThemeCount = 'maxLastSwitchedThemeCount';
+    public static MaxRecentThemeCount = 'maxRecentThemeCount';
 }
 
 export class Messages {
     public static CopiedTheme = (number: number) => `Copied ${number} themes to settings`;
     public static AddedTheme = (theme: string) => `Added ${theme} to Random Theme List in settings`;
-    public static RemovedTheme = (theme: string) => `Removed ${theme} from Random Theme List in settings`;
+    public static RemovedTheme = (theme: string, details?: string) => `Removed ${theme} from Random Theme List in settings${details}`;
     public static JunkDetected = (junkCount: number) => junkCount > 1 ?
         `The randomThemeList contains invalid theme names: do you want to fix them automatically ?` :
         `The randomThemeList contains an invalid theme name: do you want to fix it automatically ?`

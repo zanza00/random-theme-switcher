@@ -4,9 +4,9 @@ import { IConfiguration } from './i_configuration';
 
 /**
  * It stores only `maxLastSwitchedThemeCount` selected colorThemes in `_lastSwitchedThemeList`.
- * Allow users to `pickThemeFromMemories()`
+ * Allow users to `pickThemeFromRecentThemes()`
  */
-export class ThemeMemories {
+export class RecentThemes {
 
     /**
      * Internal circular list
@@ -29,12 +29,12 @@ export class ThemeMemories {
     private static cfg: IConfiguration;
 
     /**
-     *  It creates a themeMemories object
+     *  It creates a RecentThemes object
      * @param context the extension context, used for store and retrieve `_lastSwitchedThemeList`
      * @param cfg the configuration manager
      */
     constructor(private context: vscode.ExtensionContext, cfg: IConfiguration) {
-        ThemeMemories.cfg = cfg;
+        RecentThemes.cfg = cfg;
         this.maxLastSwitchedThemeCount = cfg.getMaxLastSwitchedThemeCount();
         this._lastSwitchedThemeList = context.globalState.get(LAST_SWITCHED_THEME_LIST_STORAGE_KEY) || [];
         this.isQuickPickOpen = false;
@@ -55,8 +55,8 @@ export class ThemeMemories {
     /**
      * Opens a quickPick asking the user to pick up a previously set theme again.
      */
-    public async pickThemeFromMemories(): Promise<string | undefined> {
-        const currentTheme = ThemeMemories.cfg.getCurrentTheme();
+    public async pickThemeFromRecentThemes(): Promise<string | undefined> {
+        const currentTheme = RecentThemes.cfg.getCurrentTheme();
         let chosenTheme;
         try {
             this.isQuickPickOpen = true;
@@ -73,8 +73,8 @@ export class ThemeMemories {
      */
     public async onDidSelectItem(themeName: string): Promise<any> {
         try {
-            ThemeMemories.cfg.reloadUserSettings();
-            await ThemeMemories.cfg.setCurrentThemeTo(themeName);
+            RecentThemes.cfg.reloadUserSettings();
+            await RecentThemes.cfg.setCurrentThemeTo(themeName);
         } catch (err) {
             vscode.window.showErrorMessage('Can\'t preview the theme: ' + err);
         }
