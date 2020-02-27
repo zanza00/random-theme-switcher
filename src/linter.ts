@@ -26,7 +26,7 @@ export class Linter {
      */
     public constructor(context: vscode.ExtensionContext) {
         this.diagnostics = vscode.languages.createDiagnosticCollection(EXTENSION_NAME);
-        this._settingsPath = getOsWiseGlobalSettingsPath();
+        this._settingsPath = getOsWiseGlobalSettingsPath(context);
         context.subscriptions.push(this.diagnostics,
             vscode.workspace.onDidSaveTextDocument((doc) => {
                 if (doc.fileName.includes(this._settingsPath)) {

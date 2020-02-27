@@ -1,5 +1,5 @@
-import * as os from 'os';
-import * as path from 'path';
+import { resolve, normalize, join } from 'path';
+import { ExtensionContext } from 'vscode';
 
 /**
  * It randomizes an integer.
@@ -10,22 +10,23 @@ export function getRandomInt(max: number): number {
 }
 
 /**
- * It provides the settings.json path considering the current operating system
+ * It provides the settings.json path considering the vscode instance version
  */
-export function getOsWiseGlobalSettingsPath() {
-  switch (process.platform) {
-    case 'darwin':
-      return path.join(os.homedir(), 'Library/ApplicationSupport/Code/User/settings.json');
-    case 'linux':
-      return path.join(os.homedir(), '.config/Code/User/settings.json');
-    case 'win32':
-      return path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User', 'settings.json');
-    /*case 'freebsd':
-    case 'aix':
-    case 'openbsd':
-    case 'sunos':*/
-    default:
-      return '';
+export function getOsWiseGlobalSettingsPath(context: ExtensionContext) {
+  context.globalState.update("_", undefined); // Make sure the global state folder exists. This is needed for using this.context.globalStoragePath to access user folder
+  const isPortable = !!process.env.VSCODE_PORTABLE;
+  if (!isPortable) {
+    const path = resolve((<any>context).globalStoragePath, "../../..").concat(
+      normalize("/")
+    );
+    const user_folder = resolve(path, "User").concat(normalize("/"));
+    return join(user_folder, "settings.json");
+  } else {
+    const path = process.env.VSCODE_PORTABLE!;
+    const user_folder = resolve(path, "user-data/User").concat(
+      normalize("/")
+    );
+    return join(user_folder, "settings.json");
   }
 }
 
