@@ -2,7 +2,7 @@
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
   "description": "A simple extension that randomly choose a theme",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "publisher": "zanza00",
   "icon": "icon/rts.png",
   "author": {
@@ -35,19 +35,28 @@
     "commands": [
       {
         "command": "randomThemeSwitcher.switchTheme",
-        "title": "Random Theme: Switch to a Random Theme"
+        "title": "Switch to a Random Theme",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.copyInstalledThemes",
-        "title": "Random Theme: Copy all installed themes in settings"
+        "title": "Copy all installed themes in settings",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.addCurrentTheme",
-        "title": "Random Theme: Add current theme to settings"
+        "title": "Add current theme to settings",
+        "category": "Random Theme"
       },
       {
         "command": "randomThemeSwitcher.removeCurrentTheme",
-        "title": "Random Theme: Remove current theme from settings"
+        "title": "Remove current theme from settings",
+        "category": "Random Theme"
+      },
+      {
+        "command": "randomThemeSwitcher.quickPickPreviouslySetTheme",
+        "title": "Pick a theme from the recent ones",
+        "category": "Random Theme"
       }
     ],
     "keybindings": [
@@ -61,8 +70,9 @@
       "title": "Random Theme Switcher configuration list",
       "properties": {
         "randomThemeSwitcher.switchInterval": {
+          "title": "switch interval",
           "default": 15,
-          "description": "Interval in minutes for switching theme automatically. Don't forget to set `randomThemeSwitcher.switchMode` to *interval*",
+          "description": "Interval in minutes for switching theme automatically. Don't forget to set [switchMode](#randomThemeSwitcher.switchMode) to `interval`",
           "type": "integer",
           "minimum": 3,
           "maximum": 1440
@@ -71,7 +81,8 @@
           "title": "theme list",
           "default": [],
           "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
-          "type": "array"
+          "type": "array",
+          "scope": "application"
         },
         "randomThemeSwitcher.switchMode": {
           "title": "switch mode",
@@ -90,17 +101,24 @@
             "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
             "When active it will change theme every times a keyboard key is pressed"
           ],
-          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis. Remember to reload VSC in order to apply the settings",
-          "default": "startup"
+          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis.`nRemember to reload VSC in order to apply the settings",
+          "default": true
         },
         "randomThemeSwitcher.lastSwitchDay": {
           "title": "last switch day",
-          "type": "number",
-          "description": "Last switch day (used in the switchMode daily)",
+          "type": "integer",
+          "markdownDescription": "Last switch day of the week (used in the [switchMode](#randomThemeSwitcher.switchMode) `daily`)",
+          "scope": "application"
+        },
+        "randomThemeSwitcher.maxRecentThemeCount": {
+          "title": "max recent themes count",
+          "type": "integer",
+          "default": 10,
+          "markdownDescription": "Set the maximum value of recent themes list (used when restoring a previously set theme)",
           "scope": "application"
         },
         "randomThemeSwitcher.preventReloadThemeList": {
-          "title": "one more time theme list",
+          "title": "prevent reload theme list",
           "type": "array",
           "description": "Some themes, after they are applied, reload the instance. If they are present in this list the extension will not set a new random theme after they are applied.",
           "default": [
@@ -117,6 +135,30 @@
           ]
         }
       }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "randomThemeSwitcher.switchTheme",
+          "when": "randomThemeSwitcherIsEnabled"
+        },
+        {
+          "command": "randomThemeSwitcher.copyInstalledThemes",
+          "when": "randomThemeSwitcherIsEnabled"
+        },
+        {
+          "command": "randomThemeSwitcher.addCurrentTheme",
+          "when": "randomThemeSwitcherIsEnabled"
+        },
+        {
+          "command": "randomThemeSwitcher.removeCurrentTheme",
+          "when": "randomThemeSwitcherIsEnabled"
+        },
+        {
+          "command": "randomThemeSwitcher.quickPickPreviouslySetTheme",
+          "when": "randomThemeSwitcherIsEnabled"
+        }
+      ]
     }
   },
   "scripts": {

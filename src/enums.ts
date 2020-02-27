@@ -1,4 +1,6 @@
 export const EXTENSION_NAME = 'randomThemeSwitcher';
+export const EXTENSION_CONTEXT = 'randomThemeSwitcherIsEnabled';
+export const LAST_SWITCHED_THEME_LIST_STORAGE_KEY = 'randomThemeSwitcherLastSwitchedThemeList';
 export const LAST_THEME_NEEDS_TO_PERSIST = 'last-theme-needs-to-persist';
 export const LAST_SWITCH_DAY = 'lastSwitchDay';
 export const MATERIAL_LIST = [
@@ -19,20 +21,27 @@ export class CommandsIds {
     public static CopyAll = 'randomThemeSwitcher.copyInstalledThemes';
     public static Add = 'randomThemeSwitcher.addCurrentTheme';
     public static Remove = 'randomThemeSwitcher.removeCurrentTheme';
+    public static QuickPickPreviouslySetTheme = 'randomThemeSwitcher.quickPickPreviouslySetTheme';
 }
 
 export class SettingsKeys {
     public static SwitchMode = 'switchMode';
     public static SwitchInterval = 'switchInterval';
     public static PreventReloadThemeList = 'preventReloadThemeList';
+    public static MaxRecentThemeCount = 'maxRecentThemeCount';
 }
 
 export class Messages {
     public static CopiedTheme = (number: number) => `Copied ${number} themes to settings`;
-
     public static AddedTheme = (theme: string) => `Added ${theme} to Random Theme List in settings`;
-
-    public static RemovedTheme = (theme: string) => `Removed ${theme} from Random Theme List in settings`;
+    public static RemovedTheme = (theme: string, details?: string) => `Removed ${theme} from Random Theme List in settings${details}`;
+    public static JunkDetected = (junkCount: number) => junkCount > 1 ?
+        `The randomThemeList contains invalid theme names: do you want to fix them automatically ?` :
+        `The randomThemeList contains an invalid theme name: do you want to fix it automatically ?`
+    public static JunkDetectedAfterUninstallationOrDeactivation = (junkCount: number) => junkCount > 1 ?
+        `Themes uninstalled/deactivated, do you want to remove them automatically from the randomThemeList too ?` :
+        `Theme uninstalled/deactivated, do you want to remove it from the randomThemeList too ?`
+    public static NotAValidTheme: string = "This is not a valid theme name.";
 }
 
 
