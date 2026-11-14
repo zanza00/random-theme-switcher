@@ -2,6 +2,32 @@
 
 ## Release Notes
 
+## 0.3.0 (2026-11-14)
+
+### Fixed
+
+- Random selection no longer has an off-by-one that excluded the last candidate, and no longer
+  crashes when the theme list is empty. Thanks to @webbrain-one for the report and the fix in
+  PR #54; the rewritten selector keeps that fix and adds the empty-list guard.
+- `randomThemeSwitcher.preventReloadThemeList` now uses an explicit `!== -1` check instead of
+  relying on `findIndex` truthiness.
+- Fixed the dead `typeof Array` check by using `Array.isArray` when adding the current theme.
+- Activation no longer hangs when the theme QuickPick is cancelled or the exclude regex is invalid.
+- The theme list is no longer stale after a settings change.
+- The `isSwitching` guard is always released, so a failed switch cannot block later switches.
+- Daily mode now stores a real local `YYYY-MM-DD` date in `globalState` (`lastSwitchDate`) instead of
+  the removed `randomThemeSwitcher.lastSwitchDay` setting.
+- Timers and listeners are disposed on deactivation.
+- Whole-pack theme lookup now resolves `id ?? label` instead of comparing labels only.
+- First run no longer prompts to copy installed themes.
+
+### Toolchain
+
+- VS Code 1.95 engine and `@types/vscode` 1.95.
+- TypeScript 6, esbuild bundling, ESLint 10, vitest.
+- Node 22 CI.
+- Removed `fp-ts` and the dead `vscode` package postinstall.
+
 ## 0.2.2
 
 - Fixes `switchMode` "daily" behaviour.

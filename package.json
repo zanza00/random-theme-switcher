@@ -1,9 +1,10 @@
 {
   "name": "random-theme-switcher",
   "displayName": "Random Theme Switcher",
-  "description": "A simple extension that randomly choose a theme",
-  "version": "0.2.2",
+  "description": "A simple extension that randomly chooses a theme",
+  "version": "0.3.0",
   "publisher": "zanza00",
+  "license": "MIT",
   "icon": "icon/rts.png",
   "author": {
     "name": "Simone Picciani",
@@ -13,10 +14,15 @@
     "type": "git",
     "url": "https://github.com/zanza00/random-theme-switcher"
   },
+  "homepage": "https://github.com/zanza00/random-theme-switcher#readme",
+  "bugs": {
+    "url": "https://github.com/zanza00/random-theme-switcher/issues"
+  },
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.95.0"
   },
   "categories": [
+    "Themes",
     "Other"
   ],
   "keywords": [
@@ -26,11 +32,17 @@
     "startup"
   ],
   "activationEvents": [
-    "onCommand:randomThemeSwitcher.switchTheme",
-    "onCommand:randomThemeSwitcher.copyInstalledThemes",
-    "*"
+    "onStartupFinished"
   ],
-  "main": "./dist/extension",
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -65,13 +77,19 @@
           "description": "Interval in minutes for switching theme automatically. Don't forget to set `randomThemeSwitcher.switchMode` to *interval*",
           "type": "integer",
           "minimum": 3,
-          "maximum": 1440
+          "maximum": 1440,
+          "scope": "application"
         },
         "randomThemeSwitcher.themeList": {
           "title": "theme list",
           "default": [],
           "description": "List of themes from which a random one is selected, to populate use the command 'copy installed themes'",
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "scope": "application"
         },
         "randomThemeSwitcher.switchMode": {
           "title": "switch mode",
@@ -88,21 +106,19 @@
             "When active it will change theme whenever vscode is opened",
             "When active it will change theme once a day",
             "When active it will change theme every `randomThemeSwitcher.switchInterval` minutes",
-            "When active it will change theme every times a keyboard key is pressed"
+            "When active it will change theme after each keypress, debounced by 750 ms"
           ],
-          "description": "Set whether switch automatically the theme at vscode startup, or at daily basis. Remember to reload VSC in order to apply the settings",
-          "default": "startup"
-        },
-        "randomThemeSwitcher.lastSwitchDay": {
-          "title": "last switch day",
-          "type": "number",
-          "description": "Last switch day (used in the switchMode daily)",
+          "description": "Set whether to switch the theme automatically at VS Code startup, daily, on an interval, or while typing. Settings apply immediately; no window reload is required.",
+          "default": "startup",
           "scope": "application"
         },
         "randomThemeSwitcher.preventReloadThemeList": {
-          "title": "one more time theme list",
+          "title": "themes that reload the window",
           "type": "array",
-          "description": "Some themes, after they are applied, reload the instance. If they are present in this list the extension will not set a new random theme after they are applied.",
+          "items": {
+            "type": "string"
+          },
+          "description": "Some themes reload the window when applied. If the newly selected theme is in this list, the extension skips the automatic switch on the next startup.",
           "default": [
             "Material Theme",
             "Material Theme High Contrast",
@@ -114,33 +130,32 @@
             "Material Theme Ocean High Contrast",
             "Material Theme Lighter",
             "Material Theme Lighter High Contrast"
-          ]
+          ],
+          "scope": "application"
         }
       }
     }
   },
   "scripts": {
-    "package": "vsce package",
-    "publish": "vsce publish",
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode none",
-    "webpack-dev": "webpack --mode none --watch",
-    "test-compile": "tsc -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "check-types": "tsc --noEmit",
+    "compile": "npm run check-types && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && node esbuild.js --production",
+    "vscode:prepublish": "npm run package",
+    "test": "vitest run",
+    "lint": "eslint src"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^10.12.21",
-    "prettier": "^1.17.0",
-    "ts-loader": "^5.3.3",
-    "tslint": "^5.12.1",
-    "typescript": "^3.3.1",
-    "vsce": "^1.71.0",
-    "vscode": "^1.1.33",
-    "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0"
-  },
-  "dependencies": {
-    "fp-ts": "^1.17.0"
+    "@types/node": "^22.20.5",
+    "@types/vscode": "1.95.0",
+    "@vscode/vsce": "^4.1.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0"
   }
 }

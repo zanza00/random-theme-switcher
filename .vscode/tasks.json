@@ -1,20 +1,43 @@
-// See https://go.microsoft.com/fwlink/?LinkId=733558
-// for the documentation about the tasks.json format
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "npm",
-            "script": "watch",
-            "problemMatcher": "$tsc-watch",
-            "isBackground": true,
-            "presentation": {
-                "reveal": "never"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "compile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "npm: compile",
+      "detail": "npm run check-types && node esbuild.js"
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": ["$esbuild-watch", "$tsc-watch"],
+      "label": "npm: watch",
+      "detail": "npm-run-all -p watch:*"
+    },
+    {
+      "type": "npm",
+      "script": "watch:esbuild",
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": ["$esbuild-watch"],
+      "label": "npm: watch:esbuild",
+      "detail": "node esbuild.js --watch"
+    },
+    {
+      "type": "npm",
+      "script": "watch:tsc",
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": ["$tsc-watch"],
+      "label": "npm: watch:tsc",
+      "detail": "tsc --noEmit --watch --project tsconfig.json"
+    }
+  ]
 }

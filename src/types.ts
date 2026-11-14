@@ -1,3 +1,11 @@
-type ThemeObject = { id: string; label: string;[key: string]: string; uiTheme: string };
-type SaveThemeMessage = 'copyall' | 'removedtheme' | 'addedtheme';
-type SwitchModes = 'manual' | 'startup' | 'daily' | 'interval' | 'typing';
+export type SwitchModes = 'manual' | 'startup' | 'daily' | 'interval' | 'typing';
+
+export function isSwitchMode(value: unknown): value is SwitchModes {
+  return (
+    value === 'manual' ||
+    value === 'startup' ||
+    value === 'daily' ||
+    value === 'interval' ||
+    value === 'typing'
+  );
+}

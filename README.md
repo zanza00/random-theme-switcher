@@ -1,57 +1,96 @@
 # Random Theme Switcher
 
-A simple extension that chooses and applies a *random* theme.
+A simple extension that picks and applies a **random** theme from a list you control.
+
+![Changing the current theme](media/rts.gif)
 
 ## Features
 
-* Choose between 5 switch Modes:
+Themes are drawn from `randomThemeSwitcher.themeList`. If that list is empty, all installed
+themes are used instead. The currently active theme is never picked again. If the newly selected
+theme is in `randomThemeSwitcher.preventReloadThemeList`, the automatic switch on the next startup
+is skipped (those themes reload the window when applied).
 
-| Mode     | Description                                                                         |
-| -------- | ----------------------------------------------------------------------------------- |
-| manual   | No automatic switch is performed                                                    |
-| startup  | When active it will change theme whenever vscode is opened                          |
-| daily    | When active it will change theme once a day                                         |
-| interval | When active it will change theme every `randomThemeSwitcher.switchInterval` minutes |
-| typing   | When active it will change theme every times a keyboard key is pressed              |
+### Switch modes
 
-> Don't forget to reload VSC for the changes to take effect
+| Mode       | Description                                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| `manual`   | No automatic switch, only the `Random Theme: Switch to a Random Theme` command changes the theme |
+| `startup`  | Switches once every time VS Code starts                                                          |
+| `daily`    | Switches once per local calendar day                                                             |
+| `interval` | Switches every `randomThemeSwitcher.switchInterval` minutes                                      |
+| `typing`   | Switches on each keypress, debounced by 750 ms                                                   |
 
-* With `randomThemeSwitcher.copyall` command you can copy in batch all the installed themes:
-  * You can narrow the themes' side you want to load
-  * You can optionally specify an exclude regex for theme names
+> **Warning:** `typing` mode changes the theme while you type and is disruptive. It is intended for
+> demonstrations and experiments, not for everyday use.
 
-### Change theme on command
+Settings are applied live: there is no need to reload VS Code after changing them.
 
-- Open the command palette and search for `random`
-- Choose `Random Theme: Switch to a Random Theme`
+### Commands
 
-![Change the current Theme](media/rts.gif)
+- `Random Theme: Switch to a Random Theme` (`randomThemeSwitcher.switchTheme`, keybinding
+  `Ctrl+K Ctrl+Shift+T` / `Cmd+K Cmd+Shift+T`) — apply a random theme right away.
+- `Random Theme: Copy all installed themes in settings` (`randomThemeSwitcher.copyInstalledThemes`) —
+  write every installed theme into `randomThemeSwitcher.themeList`. You can narrow the themes by
+  side (both / light / dark) and optionally filter them with an exclude regular expression.
+- `Random Theme: Add current theme to settings` (`randomThemeSwitcher.addCurrentTheme`) — append the
+  active theme to the list.
+- `Random Theme: Remove current theme from settings` (`randomThemeSwitcher.removeCurrentTheme`) —
+  drop the active theme from the list.
 
-### Change theme when vscode starts
+## Requirements
 
-- Open a new window and, after a few seconds, behold the new theme!
+- VS Code 1.95.0 or newer.
+- No other extensions are required; themes are discovered from the installed theme extensions.
 
 ## Extension Settings
 
-- `randomThemeSwitcher.switchOnOpen`: true or false, __default is true__, change to a random theme when vscode is opened.
+- `randomThemeSwitcher.switchMode`: `manual` | `startup` | `daily` | `interval` | `typing`.
+  Default `startup`.
+- `randomThemeSwitcher.switchInterval`: number of minutes between switches in `interval` mode.
+  Default `15`, minimum `3`, maximum `1440`.
+- `randomThemeSwitcher.themeList`: `string[]` of theme names to pick from. Default `[]`, which means
+  "all installed themes".
+- `randomThemeSwitcher.preventReloadThemeList`: `string[]` of theme names that must not be replaced
+  immediately after being applied (they reload the window). Defaults to the Material Theme suite.
 
-- `randomThemeSwitcher.themeList`: a list of string with labels of themes.
-
-- `preventReloadThemeList`: some themes, after they are applied, reload the instance. If are present in this list the extension will not set a new random theme after they are applied
-  - default to the material theme suite
-
-> __PROTIP:__ For easy setup use the command `Random Theme: Copy all installed themes in settings`
-
-example:
+Example:
 
 ```json
-"randomThemeSwitcher.themeList": [
-        "Andromeda Italic",
-        "Cobalt2",
-        "Dracula",
-        "Tomorrow Night Blue",
-        "Ayu Dark",
-        "One Monokai",
-        "Night Owl"
-]
+{
+  "randomThemeSwitcher.switchMode": "startup",
+  "randomThemeSwitcher.themeList": [
+    "Andromeda Italic",
+    "Cobalt2",
+    "Dracula",
+    "Tomorrow Night Blue",
+    "Ayu Dark",
+    "One Monokai",
+    "Night Owl"
+  ]
+}
 ```
+
+> **Tip:** use `Random Theme: Copy all installed themes in settings` to fill the list quickly.
+
+## Development
+
+```bash
+npm install
+npm run compile
+```
+
+- Press `F5` to launch an Extension Development Host with the extension loaded.
+- `npm test` runs the unit tests.
+- `npm run lint` runs ESLint.
+
+## Known Issues
+
+- `typing` mode switches the theme on every keypress (debounced) and can feel jarring.
+- Themes that reload the window on activation interrupt the switch cycle; list them in
+  `randomThemeSwitcher.preventReloadThemeList` to avoid an immediate follow-up switch.
+- The extension only manages themes contributed by installed extensions; it cannot add themes.
+
+## Release Notes
+
+See [CHANGELOG.md](CHANGELOG.md).
