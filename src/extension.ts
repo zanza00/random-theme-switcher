@@ -20,7 +20,7 @@ async function changeTheme(
   const userSettings = getUserSettings();
   const currentTheme = userSettings.get('workbench.colorTheme', '');
   const themeList = _themeList.filter(theme => theme !== currentTheme);
-  const i = getRandomInt(themeList.length - 1);
+  const i = getRandomInt(themeList.length);
   const newTheme = themeList[i];
   const preventReloadThemeList: string[] = <string[]>userSettings.get(SettingsKeys.PreventReloadThemeList, MATERIAL_LIST);
 
